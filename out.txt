@@ -1,0 +1,3213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الفصول</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=13">
+</head>
+<body>
+    <div id="app">
+        <!-- Login View -->
+        <div id="login-view" class="view active">
+            <div class="login-container">
+                <h2>تسجيل الدخول</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">البريد الإلكتروني</label>
+                        <input type="email" id="email" required placeholder="admin@local.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">كلمة المرور</label>
+                        <input type="password" id="password" required placeholder="password123">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">تسجيل الدخول</button>
+                    <div id="login-error" class="error-msg"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view">
+            <header>
+                <div class="header-left" style="display: flex; align-items: center; gap: 1rem;">
+                    <button id="mobile-back-btn" class="mobile-only" style="display:none; padding: 0.4rem 0.8rem; font-size: 1.2rem; cursor: pointer; background: transparent; border: none; color: var(--primary-color); font-weight: bold;">&#8594; رجوع</button>
+                    <h1>نظام إدارة الفصول</h1>
+                </div>
+                <div class="user-info">
+                    <button id="dark-toggle" class="btn-secondary btn-sm dark-toggle" style="margin-left: 10px; padding: 0.5rem; font-size: 1.2rem;">🌙</button>
+                    <div class="avatar" id="user-avatar">م</div>
+                    <div class="user-details desktop-only">
+                        <span id="user-name">الاسم</span>
+                        <span id="user-role-label" class="role-badge">المدير العام</span>
+                    </div>
+                    <button id="logout-btn" class="btn-secondary btn-sm" style="margin-right: 10px; padding: 0.5rem 0.8rem; font-weight: bold;" title="تسجيل الخروج">خروج 🚪</button>
+                </div>
+            </header>
+            
+            
+            
+                                    <!-- Mobile Welcome Card (Grid Mode Only) -->
+            <div id="mobile-welcome-card" class="mobile-only" style="margin: 1rem 1rem 0.5rem 1rem; background: white; border-radius: 24px; padding: 1rem; display: none; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.05); direction: ltr;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div class="avatar" id="mobile-grid-avatar" style="width: 50px; height: 50px; font-size: 1.5rem; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">م</div>
+                    <div style="display: flex; flex-direction: column; text-align: left;">
+                        <span style="font-size: 0.85rem; color: #888;">Welcome back</span>
+                        <span style="font-size: 1.25rem; font-weight: bold; color: #1a237e; display: flex; flex-direction: row-reverse; gap: 0.3rem;"><span id="mobile-grid-name">الاسم</span><span>أهلاً،</span></span>
+                    </div>
+                </div>
+                <div style="position: relative;">
+                    <div style="width: 45px; height: 45px; background: #f0f2f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">🔔</div>
+                    <div style="position: absolute; top: -2px; right: -2px; background: #00796b; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; border: 2px solid white;">0</div>
+                </div>
+            </div>
+
+            <nav class="main-nav" id="main-nav">
+                
+                        
+                
+                <button class="nav-btn active" data-target="panel-overview"><span class="nav-icon">📊</span><span class="nav-label">نظرة عامة</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-tree" data-target="panel-tree"><span class="nav-icon">🏫</span><span class="nav-label">المدرسة</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-classes" data-target="panel-classes"><span class="nav-icon">🚪</span><span class="nav-label">الفصول</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-students" data-target="panel-students"><span class="nav-icon">👨‍🎓</span><span class="nav-label">الطلاب</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-staff" data-target="panel-staff"><span class="nav-icon">👨‍🏫</span><span class="nav-label">الموظفين</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-exams" data-target="panel-exams"><span class="nav-icon">📝</span><span class="nav-label">الاختبارات</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-promotions" style="display:none;" data-target="panel-promotions"><span class="nav-icon">⭐</span><span class="nav-label">الترفيعات</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-finance" style="display:none;" data-target="panel-finance"><span class="nav-icon">💰</span><span class="nav-label">المالية</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-reports" data-target="panel-reports"><span class="nav-icon">📈</span><span class="nav-label">التقارير</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-audit" data-target="panel-audit" style="display:none;"><span class="nav-icon">🛡️</span><span class="nav-label">سجل النظام</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-settings" data-target="panel-settings"><span class="nav-icon">⚙️</span><span class="nav-label">الإعدادات</span><span class="nav-arrow">&#8592;</span></button>
+            </nav>
+
+            <main class="dashboard-content">
+                <div id="panel-overview" class="panel active">
+                    <div class="flex-between mb-4">
+                        <h2>نظرة عامة</h2>
+                    </div>
+                    <div class="stats-grid mb-4" id="overview-stats-grid">
+                        <div class="stat-card">
+                            <h3>إجمالي الطلاب</h3>
+                            <div class="stat-value" id="stat-students">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>إجمالي الفصول</h3>
+                            <div class="stat-value" id="stat-classes">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>المستويات</h3>
+                            <div class="stat-value" id="stat-levels">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>جلسات اليوم</h3>
+                            <div class="stat-value" id="stat-sessions">0</div>
+                            <div class="text-sm mt-2 text-muted" id="stat-sessions-completed">مكتملة: 0</div>
+                        </div>
+                        <div class="stat-card" id="boss-stat-invoices" style="display:none;">
+                            <h3>فواتير متأخرة</h3>
+                            <div class="stat-value text-danger" id="stat-invoices">0</div>
+                        </div>
+                        <div class="stat-card" id="boss-stat-promotions" style="display:none;">
+                            <h3>طلبات ترفيع</h3>
+                            <div class="stat-value text-warning" id="stat-promotions">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <h3 class="mb-4">أحدث النشاطات</h3>
+                        <div id="dashboard-activity-feed">
+                            <div class="text-muted text-center p-4">جاري التحميل...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="panel-tree" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>تصفح المدرسة (المستويات والفصول)</h2>
+                        <input type="text" id="tree-search" placeholder="بحث عن طالب..." style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; width: 300px;" oninput="
+                            const term = this.value.toLowerCase();
+                            document.querySelectorAll('.tree-student-card').forEach(card => {
+                                const match = card.textContent.toLowerCase().includes(term);
+                                card.style.display = match ? 'flex' : 'none';
+                            });
+                        ">
+                    </div>
+                    <div id="school-tree-container" class="card" style="background: transparent; box-shadow: none; padding: 0;">
+                        <!-- Tree will be rendered here via JS -->
+                    </div>
+                </div>
+
+                <div id="panel-classes" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>إدارة الفصول</h2>
+                        <button id="btn-add-class" class="btn-primary" onclick="UI.openModal('modal-class')">إضافة فصل</button>
+                    </div>
+                    <div class="classes-grid mt-4 mb-4" id="grid-classes" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+                        <!-- Rendered by JS -->
+                    </div>
+
+                </div>
+                
+                <div id="panel-students" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>إدارة الطلاب</h2>
+                        <div class="action-bar">
+                            <select id="filter-student-class" class="form-control" onchange="refreshStudentsTable()" style="width: 150px;">
+                                <option value="">جميع الفصول</option>
+                            </select>
+                            <input type="text" id="search-student" class="form-control" placeholder="بحث عن طالب..." onkeyup="filterStudents(this.value)" style="width: 250px;">
+                            <button id="btn-add-student" class="btn-primary" onclick="UI.openModal('modal-student')">إضافة طالب</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="table-students">
+                            <thead>
+                                <tr>
+                                    <th>الرقم</th>
+                                    <th>الاسم</th>
+                                    <th>المستوى</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="panel-staff" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>إدارة الموظفين</h2>
+                        <button class="btn-primary" id="btn-add-staff" style="display:none;" onclick="openAddStaffModal()">+ إضافة موظف</button>
+                    </div>
+                    <div class="table-responsive mb-4">
+                        <table class="data-table" id="table-staff-list">
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>البريد الإلكتروني</th>
+                                    <th>الدور</th>
+                                    <th>الهاتف</th>
+                                    <th>الراتب الأساسي</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <h2 class="mt-4">سبورة الملاحظات الداخلية</h2>
+                    <div class="card mt-4">
+                        <form id="form-staff-note" class="mb-4">
+                            <div class="form-group">
+                                <textarea id="staff-note-content" required placeholder="أضف ملاحظة أو إعلان للفريق..." rows="3"></textarea>
+                            </div>
+                            <div class="flex-between">
+                                <select id="staff-note-severity" style="width: auto;" class="form-group">
+                                    <option value="low">ملاحظة عادية</option>
+                                    <option value="medium">تنبيه</option>
+                                    <option value="high">تحذير / مهم</option>
+                                </select>
+                                <button type="submit" class="btn-primary">نشر الملاحظة</button>
+                            </div>
+                        </form>
+                        <div id="staff-notes-content" style="max-height: 400px; overflow-y: auto;">
+                            <!-- Notes injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="panel-exams" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>إدارة الاختبارات</h2>
+                        <button id="btn-add-exam" class="btn-primary" onclick="UI.openModal('modal-create-exam')">+ اختبار جديد</button>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="form-group" style="max-width: 300px;">
+                            <label>اختر الفصل لعرض اختباراته</label>
+                            <select id="exam-class-filter" class="form-control" onchange="loadExams()">
+                                <option value="">اختر الفصل...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="table-exams">
+                            <thead>
+                                <tr>
+                                    <th>العنوان</th>
+                                    <th>التاريخ</th>
+                                    <th>الدرجة النهائية</th>
+                                    <th>الحالة</th>
+                                    <th>شهادة؟</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="panel-promotions" class="panel">
+                    <h2>لوحة الترفيعات (طلبات قيد الانتظار)</h2>
+                    <div class="table-responsive mt-4">
+                        <table class="data-table" id="table-promotions">
+                            <thead>
+                                <tr>
+                                    <th>الطالب</th>
+                                    <th>من مستوى</th>
+                                    <th>إلى مستوى</th>
+                                    <th>درجة الاختبار</th>
+                                    <th>تاريخ الطلب</th>
+                                    <th>القرار</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                
+                <div id="panel-reports" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>التقارير والإحصائيات</h2>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="report-tabs-container">
+                            <button class="btn-primary report-tab-btn" onclick="Reports.switchTab('gradebook')">سجل الدرجات</button>
+                            <button class="btn-secondary report-tab-btn" onclick="Reports.switchTab('attendance')">تقرير الغياب</button>
+                            <button class="btn-secondary report-tab-btn" onclick="Reports.switchTab('stuck')">الطلاب المتعثرين</button>
+                        </div>
+                        
+                        <div id="report-view-gradebook" class="report-view">
+                            <div class="flex-between mb-4">
+                                <div class="form-group" style="max-width: 300px; flex: 1;">
+                                    <label>اختر الفصل</label>
+                                    <select id="report-class-select" class="form-control" onchange="Reports.loadGradebook()">
+                                        <option value="">اختر الفصل...</option>
+                                    </select>
+                                </div>
+                                <button class="btn-secondary" onclick="Reports.exportCSV('table-report-gradebook', 'سجل_الدرجات.csv')">تصدير CSV</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-report-gradebook">
+                                    <thead><tr><th>الطالب</th><th>النسبة الإجمالية</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div id="report-view-attendance" class="report-view" style="display:none;">
+                            <div class="flex-between mb-4">
+                                <div class="form-group" style="max-width: 300px; flex: 1;">
+                                    <label>اختر الفصل</label>
+                                    <select id="report-attendance-class-select" class="form-control" onchange="Reports.loadAttendance()">
+                                        <option value="">اختر الفصل...</option>
+                                    </select>
+                                </div>
+                                <button class="btn-secondary" onclick="Reports.exportCSV('table-report-attendance', 'تقرير_الغياب.csv')">تصدير CSV</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-report-attendance">
+                                    <thead><tr><th>الطالب</th><th>حضور</th><th>غياب</th><th>تأخر</th><th>عذر</th><th>نسبة الغياب</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div id="report-view-stuck" class="report-view" style="display:none;">
+                            <div class="flex-between mb-4">
+                                <p>الطلاب الذين لم يتم ترفيعهم لأكثر من 90 يوم</p>
+                                <button class="btn-secondary" onclick="Reports.exportCSV('table-report-stuck', 'الطلاب_المتعثرين.csv')">تصدير CSV</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-report-stuck">
+                                    <thead><tr><th>الطالب</th><th>المستوى الحالي</th><th>تاريخ آخر تحرك</th><th>أيام التعثر</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="panel-audit" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>سجل النظام (Audit Log)</h2>
+                        <button class="btn-secondary" onclick="Audit.loadLogs()">تحديث</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="table-audit">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ والوقت</th>
+                                    <th>المستخدم</th>
+                                    <th>الحدث</th>
+                                    <th>الكيان</th>
+                                    <th>المعرف</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="panel-settings" class="panel">
+                    <h2>الإعدادات</h2>
+
+                    <div class="card mt-4" id="settings-institution-card" style="display:none;">
+                        <h3 style="margin-bottom: 1rem;">إعدادات المؤسسة</h3>
+                        <form id="form-settings">
+                            <div class="settings-grid">
+                                <div class="form-group">
+                                    <label>اسم المؤسسة</label>
+                                    <input type="text" id="setting-institution-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>العملة</label>
+                                    <input type="text" id="setting-currency" required placeholder="EGP">
+                                </div>
+                                <div class="form-group">
+                                    <label>عتبة التعثر (أشهر)</label>
+                                    <input type="number" id="setting-stuck-months" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>عتبة التعثر (درجة)</label>
+                                    <input type="number" id="setting-stuck-grade" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>درجة النجاح الافتراضية</label>
+                                    <input type="number" id="setting-passing-grade" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary mt-4">حفظ الإعدادات</button>
+                        </form>
+                    </div>
+
+                    <div class="card mt-4" id="settings-db-card" style="display:none; background: #fff5f5; border-color: #fc8181;">
+                        <h3 style="margin-bottom: 1rem; color: #c53030;">إدارة قاعدة البيانات (المدير فقط)</h3>
+                        <p style="margin-bottom: 1rem; color: #e53e3e; font-size: 0.9rem;">
+                            <strong>تحذير:</strong> هذه العمليات خطيرة جداً وتؤثر على جميع بيانات النظام. يرجى الحذر.
+                        </p>
+                        <div class="db-actions">
+                            <button class="btn-primary" onclick="DBAdmin.downloadBackup()">تحميل نسخة احتياطية</button>
+                            
+                            <label class="btn-secondary" style="cursor: pointer;">
+                                رفع قاعدة بيانات
+                                <input type="file" id="db-upload-input" accept=".db" style="display: none;" onchange="DBAdmin.uploadBackup(this)">
+                            </label>
+                            
+                            <button class="btn-danger" style="margin-right: auto;" onclick="DBAdmin.wipeDatabase()">مسح جميع البيانات</button>
+                        </div>
+                    </div>
+
+                    
+                    <div class="card mt-4" id="settings-fee-templates-card" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <h3>قوالب الرسوم (للإيرادات)</h3>
+                            <button class="btn-primary" onclick="FinanceUI.openFeeTemplateModal()">+ إضافة قالب</button>
+                        </div>
+                        <table class="data-table" id="table-fee-templates">
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>المبلغ</th>
+                                    <th>المستوى المخصص</th>
+                                    <th>النوع</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <div class="flex-between mb-4">
+                            <div class="action-bar">
+                                <h3>إدارة المواد والمستويات الدراسية</h3>
+                                <button class="btn-secondary btn-sm" onclick="RoadmapUI.showPanel()">عرض المسارات (Roadmap)</button>
+                            </div>
+                            <button id="btn-add-subject" class="btn-primary" onclick="UI.openModal('modal-subject')">إضافة مادة جديدة</button>
+                        </div>
+                        <div id="subjects-levels-tree" class="accordion-container mt-3">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4" style="background: #fffafa; border: 1px solid #ffcccc;">
+                        <h3 class="text-danger mb-3">تسجيل الخروج</h3>
+                        <p class="mb-3 text-muted">إنهاء جلستك الحالية وتسجيل الخروج من النظام.</p>
+                        <button class="btn-danger" onclick="document.getElementById('logout-btn').click()">تسجيل الخروج من النظام</button>
+                    </div>
+                </div>
+
+                <div id="panel-roadmaps" class="panel">
+                    <div class="flex-between mb-4">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <button class="btn-secondary" onclick="RoadmapUI.hidePanel()" style="border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">&#8594;</button>
+                            <h2 style="margin: 0;">مسارات التعلم للمواد (Roadmaps)</h2>
+                        </div>
+                        <button class="btn-secondary" onclick="RoadmapUI.render()">تحديث المسارات</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div id="roadmap-container" style="padding: 1rem 0;">
+                            <div class="text-center text-muted">جاري التحميل...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="panel-finance" class="panel">
+                    <h2>المالية</h2>
+                    <div class="tabs mt-4 mb-4 finance-tabs-nav">
+                        <button class="btn-primary finance-nav-btn active-tab" onclick="FinanceUI.showTab('finance-income', this)">الإيرادات والرسوم</button>
+                        <button class="btn-secondary finance-nav-btn" onclick="FinanceUI.showTab('finance-salaries', this)">الرواتب</button>
+                        <button class="btn-secondary finance-nav-btn" onclick="FinanceUI.showTab('finance-expenses', this)">المصروفات</button>
+                        <button class="btn-secondary finance-nav-btn" onclick="FinanceUI.showTab('finance-debts', this)">الديون</button>
+                        <button class="btn-secondary finance-nav-btn" onclick="FinanceUI.showTab('finance-reports', this)">التقارير</button>
+                    </div>
+
+                    <div id="finance-income" class="finance-tab" style="display:block;">
+                        <!-- Summary Cards -->
+                        <div class="finance-summary-grid mb-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div class="stat-card" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border-right: 4px solid #3b82f6; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <h3 style="margin-top:0; font-size: 1rem; color: #64748b;">إجمالي الفوترة</h3>
+                                <p id="summary-billed" class="text-primary" style="font-size: 1.5rem; font-weight: bold; margin:0;">0 ج.م</p>
+                            </div>
+                            <div class="stat-card" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border-right: 4px solid #10b981; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <h3 style="margin-top:0; font-size: 1rem; color: #64748b;">التحصيلات</h3>
+                                <p id="summary-collected" class="text-success" style="font-size: 1.5rem; font-weight: bold; margin:0;">0 ج.م</p>
+                            </div>
+                            <div class="stat-card" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border-right: 4px solid #ef4444; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <h3 style="margin-top:0; font-size: 1rem; color: #64748b;">المستحقات (ديون)</h3>
+                                <p id="summary-outstanding" class="text-danger" style="font-size: 1.5rem; font-weight: bold; margin:0;">0 ج.م</p>
+                            </div>
+                            <div class="stat-card" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border-right: 4px solid #f59e0b; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <h3 style="margin-top:0; font-size: 1rem; color: #64748b;">فواتير متأخرة</h3>
+                                <p id="summary-overdue" class="text-warning" style="font-size: 1.5rem; font-weight: bold; margin:0;">0</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-between mb-4">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <h3 style="margin:0;">فواتير الطلاب</h3>
+                                <select id="filter-invoice-status" class="form-control" style="width:120px;" onchange="FinanceUI.loadInvoices()">
+                                    <option value="">جميع الحالات</option>
+                                    <option value="paid">مدفوعة</option>
+                                    <option value="partial">جزئي</option>
+                                    <option value="unpaid">غير مدفوعة</option>
+                                </select>
+                                <input type="date" id="filter-invoice-from" class="form-control" title="من تاريخ" onchange="FinanceUI.loadInvoices()">
+                                <input type="date" id="filter-invoice-to" class="form-control" title="إلى تاريخ" onchange="FinanceUI.loadInvoices()">
+                            </div>
+                            <div class="action-group">
+                                <button class="btn-primary" onclick="FinanceUI.openBulkInvoiceModal()">فوترة جماعية</button>
+                                <button class="btn-primary" onclick="FinanceUI.openInvoiceModal()">+ إضافة فاتورة</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-invoices">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>البيان</th>
+                                        <th>المبلغ</th>
+                                        <th>المدفوع</th>
+                                        <th>المتبقي</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="finance-salaries" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <h3>رواتب الموظفين</h3>
+                            <div class="action-group">
+                                <input type="month" id="salary-month-filter" class="form-control" onchange="FinanceUI.loadSalaries()">
+                                <button class="btn-primary" onclick="FinanceUI.generateBulkSalaries()">توليد رواتب الشهر</button>
+                                <button class="btn-primary" onclick="FinanceUI.openSalaryModal()">+ رصد راتب</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-salaries">
+                                <thead>
+                                    <tr>
+                                        <th>الموظف</th>
+                                        <th>الشهر</th>
+                                        <th>الأساسي</th>
+                                        <th>البدلات</th>
+                                        <th>الخصومات</th>
+                                        <th>الصافي</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="finance-expenses" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <h3>المصروفات التشغيلية</h3>
+                            <button class="btn-primary" onclick="UI.openModal('modal-expense')">+ إضافة مصروف</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-expenses">
+                                <thead>
+                                    <tr>
+                                        <th>التاريخ</th>
+                                        <th>التصنيف</th>
+                                        <th>المبلغ</th>
+                                        <th>الوصف</th>
+                                        <th>سجل بواسطة</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    
+                    <div id="finance-debts" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <h3>الديون المستحقة</h3>
+                            <button class="btn-secondary" onclick="FinanceUI.loadDebts()">تحديث</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-debts">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>البيان</th>
+                                        <th>المبلغ الكلي</th>
+                                        <th>المدفوع</th>
+                                        <th>المتبقي</th>
+                                        <th>الحالة</th>
+                                        <th>تسجيل دفعة</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="finance-reports" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <h3>التقارير المالية</h3>
+                            <button class="btn-secondary" onclick="FinanceUI.loadReports()">تحديث</button>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3>إجمالي الإيرادات</h3>
+                                <div class="stat-value text-success" id="report-income">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>المستحقات غير المدفوعة</h3>
+                                <div class="stat-value text-warning" id="report-outstanding">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>الرواتب المدفوعة</h3>
+                                <div class="stat-value text-danger" id="report-salaries">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>المصروفات التشغيلية</h3>
+                                <div class="stat-value text-danger" id="report-expenses">0</div>
+                            </div>
+                            <div class="stat-card" style="grid-column: span 2;">
+                                <h3>صافي الأرباح</h3>
+                                <div class="stat-value" id="report-net">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-subject" class="modal">
+        <div class="modal-content">
+            <h3>إضافة مادة</h3>
+            <form id="form-subject">
+                <input type="hidden" id="subj-id">
+                <div class="form-group">
+                    <label>اسم المادة</label>
+                    <input type="text" id="subj-name" required>
+                </div>
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <input type="text" id="subj-desc">
+                </div>
+                <div class="form-group">
+                    <label>نسبة النجاح للترقية التلقائية (%)</label>
+                    <input type="number" id="subj-promo-threshold" value="75" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-subject')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <div id="modal-level" class="modal">
+        <div class="modal-content">
+            <h3>إضافة مستوى</h3>
+            <form id="form-level">
+                <input type="hidden" id="lvl-id">
+                <div class="form-group">
+                    <label>اسم المستوى</label>
+                    <input type="text" id="lvl-name" required>
+                </div>
+                <div class="form-group">
+                    <label>الرمز (مثال: L1)</label>
+                    <input type="text" id="lvl-code" required>
+                </div>
+                <div class="form-group">
+                    <label>الترتيب</label>
+                    <input type="number" id="lvl-order" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label>المادة</label>
+                    <select id="lvl-subject-id" required></select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-level')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-class" class="modal">
+        <div class="modal-content">
+            <h3>إضافة فصل</h3>
+            <form id="form-class">
+                <input type="hidden" id="cls-id">
+                <div class="form-group">
+                    <label>اسم الفصل</label>
+                    <input type="text" id="cls-name" required>
+                </div>
+                <div class="form-group">
+                    <label>المستوى</label>
+                    <select id="cls-level" required></select>
+                </div>
+                <div class="form-group">
+                    <label>المجموعة (أ، ب، ج...)</label>
+                    <input type="text" id="cls-group" required>
+                </div>
+                <div class="form-group">
+                    <label>السعة (عدد الطلاب)</label>
+                    <input type="number" id="cls-capacity" value="30" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-class')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-student" class="modal">
+        <div class="modal-content">
+            <h3>إضافة طالب</h3>
+            <form id="form-student">
+                <input type="hidden" id="stu-edit-id">
+                <div class="form-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="stu-name" required>
+                </div>
+                <div class="form-group">
+                    <label>تاريخ الميلاد</label>
+                    <input type="date" id="stu-dob">
+                </div>
+                <div class="form-group">
+                    <label>العنوان</label>
+                    <input type="text" id="stu-address">
+                </div>
+                <div class="form-group">
+                    <label>رقم هاتف الوالد</label>
+                    <input type="text" id="stu-father-phone">
+                </div>
+                <div class="form-group">
+                    <label>رقم هاتف الوالدة</label>
+                    <input type="text" id="stu-mother-phone">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-student')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-enroll" class="modal">
+        <div class="modal-content">
+            <h3>تسجيل طالب في فصل</h3>
+            <form id="form-enroll">
+                <input type="hidden" id="enroll-student-id">
+                <div class="form-group">
+                    <label>الطالب</label>
+                    <input type="text" id="enroll-student-name" disabled>
+                </div>
+                <div class="form-group">
+                    <label>اختر الفصل</label>
+                    <select id="enroll-class-id" required onchange="UI.onEnrollClassChange()"></select>
+                </div>
+                <div id="enroll-subject-levels-container" style="display: none; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <h4>تحديد المستويات للمواد</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">سيتم تعيين المستوى الأول افتراضياً إذا تركته فارغاً.</p>
+                    <div id="enroll-subject-levels-list"></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-enroll')">إلغاء</button>
+                    <button type="submit" class="btn-primary">تسجيل وإصدار شهادة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-sessions" class="modal">
+        <div class="modal-content modal-lg">
+            <div class="flex-between mb-4">
+                <h3 id="sessions-modal-title">الجلسات (الجدول والحضور)</h3>
+                <div>
+                    <button class="btn-primary" onclick="Sessions.generateSessions()">توليد جلسات الشهر</button>
+                    <button class="btn-secondary" onclick="UI.closeModal('modal-sessions')">إغلاق</button>
+                </div>
+            </div>
+            
+            <input type="hidden" id="current-sessions-class-id">
+            
+            <h4>الجدول الأسبوعي</h4>
+            <form id="form-schedule" class="mb-4">
+                <div class="schedule-form-row">
+                    <div class="form-group">
+                        <label>اليوم</label>
+                        <select id="sched-day" required>
+                            <option value="0">الأحد</option>
+                            <option value="1">الإثنين</option>
+                            <option value="2">الثلاثاء</option>
+                            <option value="3">الأربعاء</option>
+                            <option value="4">الخميس</option>
+                            <option value="5">الجمعة</option>
+                            <option value="6">السبت</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المادة</label>
+                        <select id="sched-subject" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>وقت البدء</label>
+                        <input type="time" id="sched-start" required>
+                    </div>
+                    <div class="form-group">
+                        <label>وقت الانتهاء</label>
+                        <input type="time" id="sched-end" required>
+                    </div>
+                    <button type="submit" class="btn-primary">إضافة للجدول</button>
+                </div>
+            </form>
+            
+            <div class="table-responsive mb-4">
+                <table class="data-table" id="table-schedules">
+                    <thead>
+                        <tr>
+                            <th>اليوم</th>
+                            <th>المادة</th>
+                            <th>الوقت</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <hr style="margin: 20px 0; border: 1px solid var(--border-color);">
+            
+            <h4>الجلسات القادمة</h4>
+            <div class="mb-4">
+                <div id="sessions-list" class="task-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-attendance" class="modal">
+        <div class="modal-content modal-lg">
+            <h3>تسجيل الحضور</h3>
+            <form id="form-attendance">
+                <input type="hidden" id="att-session-id">
+                <div class="mb-4">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span style="font-weight: bold; color: var(--text-color);">قائمة الطلاب</span>
+                        <button type="button" class="btn-primary btn-sm" onclick="Sessions.markAllPresent()">تحديد الكل كحاضر</button>
+                    </div>
+                    <div id="attendance-list" class="checklist-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-attendance')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ الحضور</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Student Profile Modal -->
+    <div id="modal-student-profile" class="modal">
+        <div class="modal-content modal-lg profile-dashboard">
+            <button type="button" class="close-btn" onclick="UI.closeModal('modal-student-profile')">&times;</button>
+            <div class="profile-hero mb-4">
+                <div class="profile-hero-main">
+                    <div class="profile-avatar" id="profile-avatar-display">ط</div>
+                    <div class="profile-header-info">
+                        <h2 id="profile-name" style="margin-bottom: 0.25rem;">اسم الطالب</h2>
+                        <div class="profile-badges">
+                            <span class="role-badge" id="profile-status-badge" style="background: var(--success-color); color: white;">نشط</span>
+                            <span class="role-badge" id="profile-progress-badge" style="background: var(--primary-color); color: white;">التقدم: جيد</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-quick-actions">
+                    <button class="btn-primary btn-sm" onclick="app.quickPayment(event)">💸 تسديد دفعة</button>
+                    <button class="btn-secondary btn-sm" onclick="app.quickPrint(event)">🖨️ طباعة السجل</button>
+                </div>
+            </div>
+            
+            <input type="hidden" id="profile-student-id">
+            
+            <div class="stats-grid profile-stats-grid mb-4">
+                <!-- Academic Score Ring -->
+                <div class="stat-card stat-card-visual" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem;">متوسط الدرجات</div>
+                    <div class="circular-progress" id="profile-score-ring">
+                        <div class="inner-circle" id="profile-score">-</div>
+                    </div>
+                </div>
+                
+                <!-- Attendance Stats -->
+                <div class="stat-card" style="padding: 1rem; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="font-size: 0.9rem; color: var(--text-muted);">الغياب</div>
+                    <div class="stat-value" id="profile-absences" style="font-size: 1.8rem; color: var(--danger-color);">0</div>
+                </div>
+                <div class="stat-card" style="padding: 1rem; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="font-size: 0.9rem; color: var(--text-muted);">التأخير</div>
+                    <div class="stat-value" id="profile-lates" style="font-size: 1.8rem; color: var(--warning-color);">0</div>
+                </div>
+                
+                <!-- Financial Wallet -->
+                <div class="stat-card wallet-card" style="padding: 1rem; background: var(--surface-color); border: 2px solid var(--border-color);">
+                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: bold;">المحفظة المالية</div>
+                    <div class="wallet-bar-container">
+                        <div class="wallet-bar-paid" id="wallet-paid-bar" style="width: 0%;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 0.5rem;">
+                        <span style="color: var(--success-color);">المدفوع: <span id="profile-total-paid">0</span></span>
+                        <span style="color: var(--text-muted);">الإجمالي: <span id="profile-total-billed">0</span></span>
+                    </div>
+                    <hr style="margin: 0.5rem 0; border: 1px solid var(--border-color);">
+                    <div style="font-size: 0.9rem; text-align: left;">
+                        الرصيد المتبقي: <strong id="profile-balance" style="color: var(--danger-color); font-size: 1.1rem;">0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <div class="main-nav profile-nav mb-4">
+                    <button class="nav-btn active" onclick="UI.switchProfileTab('info', event)">
+                        <span class="nav-icon">👤</span><span class="nav-label">البيانات الشخصية</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('attendance', event)">
+                        <span class="nav-icon">📅</span><span class="nav-label">سجل الحضور</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('exams', event)">
+                        <span class="nav-icon">📝</span><span class="nav-label">الاختبارات</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('timeline', event)">
+                        <span class="nav-icon">⏳</span><span class="nav-label">الخط الزمني</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('notes', event)">
+                        <span class="nav-icon">📋</span><span class="nav-label">الملاحظات</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('finance', event)">
+                        <span class="nav-icon">💰</span><span class="nav-label">المالية</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('certificates', event)">
+                        <span class="nav-icon">🎓</span><span class="nav-label">الشهادات</span>
+                    </button>
+                </div>
+                
+                <div id="ptab-info" class="profile-tab active">
+                    <div class="profile-info-grid">
+                        <div class="info-group-card">
+                            <h4><span class="icon">👤</span> معلومات أساسية</h4>
+                            <div class="info-row"><span class="label">تاريخ الميلاد:</span> <span class="val" id="profile-dob"></span></div>
+                            <div class="info-row"><span class="label">تاريخ الالتحاق:</span> <span class="val" id="profile-enroll-date"></span></div>
+                            <div class="info-row"><span class="label">العنوان:</span> <span class="val" id="profile-address"></span></div>
+                        </div>
+                        <div class="info-group-card">
+                            <h4><span class="icon">📞</span> بيانات التواصل</h4>
+                            <div class="info-row"><span class="label">هاتف الوالد:</span> <span class="val" id="profile-father-phone"></span></div>
+                            <div class="info-row"><span class="label">هاتف الوالدة:</span> <span class="val" id="profile-mother-phone"></span></div>
+                        </div>
+                        <div class="info-group-card" style="grid-column: 1 / -1;">
+                            <div class="flex-between mb-2">
+                                <h4><span class="icon">📈</span> المستويات الحالية</h4>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" style="font-size: 0.9rem;">
+                                    <thead>
+                                        <tr>
+                                            <th>المادة</th>
+                                            <th>المستوى الحالي</th>
+                                            <th>تاريخ التحديث</th>
+                                            <th>إجراء</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="profile-subject-levels-content">
+                                        <!-- Populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="ptab-attendance" class="profile-tab" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>المادة</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-attendance-content">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="ptab-exams" class="profile-tab" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>الاختبار</th>
+                                    <th>الدرجة</th>
+                                    <th>النسبة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-exams-content">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="ptab-timeline" class="profile-tab" style="display: none;">
+                    <div id="profile-timeline-content" style="max-height: 300px; overflow-y: auto;">
+                        <!-- Timeline entries will be injected here -->
+                    </div>
+                </div>
+                
+                <div id="ptab-notes" class="profile-tab" style="display: none;">
+                    <form id="form-add-note" class="mb-4">
+                        <div class="form-group">
+                            <textarea id="note-content" required placeholder="أضف ملاحظة جديدة..." rows="3"></textarea>
+                        </div>
+                        <div class="flex-between">
+                            <select id="note-severity" style="width: auto;" class="form-group">
+                                <option value="low">ملاحظة عادية</option>
+                                <option value="medium">تنبيه</option>
+                                <option value="high">تحذير / مهم</option>
+                            </select>
+                            <button type="submit" class="btn-primary">إضافة ملاحظة</button>
+                        </div>
+                    </form>
+                    <div id="profile-notes-content" style="max-height: 300px; overflow-y: auto;">
+                        <!-- Notes will be injected here -->
+                    </div>
+                </div>
+
+                <div id="ptab-finance" class="profile-tab" style="display: none;">
+                    <h4 class="mb-2">الفواتير</h4>
+                    <div class="table-responsive mb-4">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>العنوان</th>
+                                    <th>الإجمالي</th>
+                                    <th>المدفوع</th>
+                                    <th>المتبقي</th>
+                                    <th>تاريخ الاستحقاق</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-invoices-content">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="mb-2">المدفوعات</h4>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>المبلغ</th>
+                                    <th>طريقة الدفع</th>
+                                    <th>رقم الإيصال</th>
+                                    <th>التاريخ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-payments-content">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="ptab-certificates" class="profile-tab" style="display: none;">
+                    <div class="flex-between mb-3">
+                        <h4 style="margin:0;">الشهادات المحفوظة</h4>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>نوع الشهادة</th>
+                                    <th>تاريخ الإصدار</th>
+                                    <th>الحالة</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-certificates-content">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions mt-4">
+                
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-manual-level" class="modal">
+        <div class="modal-content">
+            <h3>تغيير مستوى الطالب يدوياً</h3>
+            <form id="form-manual-level">
+                <input type="hidden" id="manual-lvl-student-id">
+                <div class="form-group">
+                    <label>المادة</label>
+                    <select id="manual-lvl-subject-id" required onchange="UI.onManualLevelSubjectChange()"></select>
+                </div>
+                <div class="form-group">
+                    <label>المستوى الجديد</label>
+                    <select id="manual-lvl-level-id" required></select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-manual-level')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ وتغيير</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Class Profile Modal -->
+    <div id="modal-class-profile" class="modal">
+        <div class="modal-content modal-lg">
+            <h3 id="class-profile-title">ملف الفصل</h3>
+            
+            <div class="stats-grid class-profile-grid mb-4">
+                <div class="card">
+                    <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">الطلاب المتميزون</h4>
+                    <ul id="class-leading-students" style="list-style: none; padding: 0;">
+                        <li>سيتم التفعيل مع نظام الاختبارات والدرجات</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 style="color: var(--danger-color); margin-bottom: 0.5rem;">الطلاب الأكثر غياباً</h4>
+                    <ul id="class-absent-students" style="list-style: none; padding: 0;">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 style="color: var(--warning-color); margin-bottom: 0.5rem;">الطلاب المتعثرون</h4>
+                    <ul class="tree-list" id="cls-prof-exams">
+                        <div class="state-empty"><p>لا يوجد امتحانات</p></div>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 style="color: var(--text-muted); margin-bottom: 0.5rem;">تأخر في الترقية</h4>
+                    <ul class="tree-list" id="cls-prof-stats">
+                        <div class="state-empty"><p>لا توجد إحصائيات</p></div>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="modal-actions mt-4">
+                <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-class-profile')">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Exam Modal -->
+    <div id="modal-create-exam" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="flex-between mb-4">
+                <h2>إضافة اختبار جديد</h2>
+                <span class="close" onclick="UI.closeModal('modal-create-exam')">&times;</span>
+            </div>
+            <form id="form-create-exam">
+                <div class="form-group">
+                    <label>عنوان الاختبار</label>
+                    <input type="text" id="exam-title" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>الفصل</label>
+                    <select id="exam-class-id" required class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>المادة</label>
+                    <select id="exam-subject-id" required class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>التاريخ</label>
+                    <input type="date" id="exam-date" required class="form-control">
+                </div>
+                <div class="flex-between">
+                    <div class="form-group" style="width: 48%;">
+                        <label>الدرجة النهائية</label>
+                        <input type="number" id="exam-total" value="100" required class="form-control">
+                    </div>
+                    <div class="form-group" style="width: 48%;">
+                        <label>درجة النجاح</label>
+                        <input type="number" id="exam-passing" value="50" required class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="exam-is-certification">
+                        هذا اختبار شهادة (النجاح فيه يرشح الطالب للترفيع)
+                    </label>
+                </div>
+                <button type="submit" class="btn-primary w-100">حفظ الاختبار</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grade Exam Modal -->
+    <div id="modal-grade-exam" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="flex-between mb-4">
+                <h2>رصد درجات الاختبار: <span id="grade-exam-title"></span></h2>
+                <span class="close" onclick="UI.closeModal('modal-grade-exam')">&times;</span>
+            </div>
+            <input type="hidden" id="grade-exam-id">
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="data-table" id="table-grade-exam">
+                    <thead>
+                        <tr>
+                            <th>الطالب</th>
+                            <th>الدرجة</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="flex-between mt-4">
+                <button class="btn-primary" onclick="submitExamScores()">حفظ الدرجات</button>
+                <button class="btn-secondary" onclick="publishExam()" id="btn-publish-exam">نشر الاختبار (نهائي)</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-invoice" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="flex-between mb-4">
+                <h2>إضافة فاتورة (مستحقات طالب)</h2>
+                <span class="close" onclick="UI.closeModal('modal-invoice')">&times;</span>
+            </div>
+            <form id="form-invoice">
+                <div class="form-group">
+                    <label>الطالب</label>
+                    <select id="invoice-student-id" required class="form-control" onchange="FinanceUI.onStudentSelectForInvoice(this)"></select>
+                </div>
+                <div class="form-group">
+                    <label>قالب الرسوم (اختياري)</label>
+                    <select id="invoice-template-id" class="form-control" onchange="FinanceUI.onTemplateSelect(this)">
+                        <option value="">-- إدخال يدوي --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>البيان</label>
+                    <input type="text" id="invoice-title" required class="form-control" placeholder="مثال: رسوم شهر سبتمبر">
+                </div>
+                <div class="form-group">
+                    <label>المبلغ الإجمالي</label>
+                    <input type="number" id="invoice-amount" required class="form-control" oninput="FinanceUI.calculateInvoiceTotals()">
+                </div>
+                
+                <div class="card mt-3 mb-3 p-3 bg-light">
+                    <h4 class="mb-3" style="font-size: 1rem; color: #555;">الخصم</h4>
+                    <div style="display: flex; gap: 1rem;">
+                        <div style="flex: 1;">
+                            <select id="invoice-discount-type" class="form-control" onchange="FinanceUI.calculateInvoiceTotals()">
+                                <option value="fixed">مبلغ ثابت</option>
+                                <option value="percent">نسبة مئوية (%)</option>
+                            </select>
+                        </div>
+                        <div style="flex: 2;">
+                            <input type="number" id="invoice-discount-value" class="form-control" placeholder="0" min="0" oninput="FinanceUI.calculateInvoiceTotals()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3 mb-3 p-3" style="background: #fdfdfd; border: 1px solid #eee;">
+                    <div class="flex-between mb-2">
+                        <span class="text-muted">قيمة الفاتورة الحالية</span>
+                        <span id="invoice-calc-current" style="font-weight: 500;">0.00 ج.م</span>
+                    </div>
+                    <div class="flex-between mb-2">
+                        <span class="text-muted" style="line-height: 1.2;">الحساب السابق<br><small style="font-size: 0.75rem;">إجمالي مديونية الطالب قبل هذه الفاتورة</small></span>
+                        <span id="invoice-calc-previous" style="font-weight: 500;">0.00 ج.م</span>
+                    </div>
+                    <hr style="margin: 0.75rem 0;">
+                    <div class="flex-between mb-3 p-2" style="background: #eef2ff; border-radius: 4px; border: 1px solid #c7d2fe;">
+                        <span style="font-weight: bold; color: var(--primary-color);">إجمالي الحساب المطلوب</span>
+                        <span id="invoice-calc-total-due" style="font-weight: bold; color: var(--primary-color); font-size: 1.1rem;">0.00 ج.م</span>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="flex-between mb-1">
+                            <label style="margin:0; font-weight: bold; color: #333;">المبلغ المحصل الآن</label>
+                            <a href="#" onclick="FinanceUI.payFullInvoiceAccount(); return false;" class="text-sm" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">سداد الحساب بالكامل</a>
+                        </div>
+                        <input type="number" id="invoice-paid-amount" class="form-control" placeholder="0.00" min="0" oninput="FinanceUI.calculateInvoiceTotals()" style="font-size: 1.1rem; padding: 0.75rem;">
+                    </div>
+                    
+                    <hr style="margin: 0.75rem 0;">
+                    <div class="flex-between mt-2">
+                        <span style="font-weight: bold; line-height: 1.2; color: #333;">صافي المديونية المتبقية<br><small class="text-muted" style="font-weight: normal; font-size: 0.75rem;">إجمالي ما سيبقى على الطالب بعد الفاتورة</small></span>
+                        <span id="invoice-calc-remaining" style="font-weight: bold; font-size: 1.3rem; color: #333;">0.00 ج.م</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>تاريخ الاستحقاق (اختياري)</label>
+                    <input type="date" id="invoice-due-date" class="form-control">
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn-secondary" style="flex: 1;" onclick="UI.closeModal('modal-invoice')">إلغاء</button>
+                    <button type="submit" class="btn-primary" style="flex: 2;">حفظ الفاتورة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-bulk-invoice" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2>فوترة جماعية لفصل كامل</h2>
+                <span class="close" onclick="UI.closeModal('modal-bulk-invoice')">&times;</span>
+            </div>
+            <form id="form-bulk-invoice">
+                <div class="form-group">
+                    <label>الفصل</label>
+                    <select id="bulk-class-id" required class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>قالب الرسوم</label>
+                    <select id="bulk-template-id" required class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>تسمية الشهر / الدفعة</label>
+                    <input type="text" id="bulk-month-label" required class="form-control" placeholder="مثال: شهر 10">
+                </div>
+                <button type="submit" class="btn-primary w-100">توليد الفواتير</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-fee-template" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2>إضافة قالب رسوم</h2>
+                <span class="close" onclick="UI.closeModal('modal-fee-template')">&times;</span>
+            </div>
+            <form id="form-fee-template">
+                <div class="form-group">
+                    <label>اسم القالب (البيان)</label>
+                    <input type="text" id="fee-template-name" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>المبلغ</label>
+                    <input type="number" id="fee-template-amount" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>تخصيص لمستوى (اختياري)</label>
+                    <select id="fee-template-level" class="form-control">
+                        <option value="">عام (لجميع المستويات)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="fee-template-recurring" checked>
+                    <label style="margin:0;">رسوم دورية (تتكرر)</label>
+                </div>
+                <button type="submit" class="btn-primary w-100">حفظ القالب</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-payment" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2>تسجيل دفعة <span id="payment-invoice-title"></span></h2>
+                <span class="close" onclick="UI.closeModal('modal-payment')">&times;</span>
+            </div>
+            <form id="form-payment">
+                <input type="hidden" id="pay-student-id">
+                <input type="hidden" id="pay-invoice-id">
+                <div class="form-group">
+                    <label>طريقة الدفع</label>
+                    <select id="pay-method" required class="form-control">
+                        <option value="cash">نقدي</option>
+                        <option value="bank">حوالة بنكية</option>
+                        <option value="card">بطاقة دفع</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>المبلغ</label>
+                    <input type="number" id="pay-amount" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>سبب الدفع / ملاحظات</label>
+                    <input type="text" id="pay-notes" class="form-control" placeholder="اختياري (مثال: رسوم شهر يوليو)">
+                </div>
+                <button type="submit" class="btn-primary w-100">حفظ وطباعة إيصال</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-salary" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2>رصد راتب موظف</h2>
+                <span class="close" onclick="UI.closeModal('modal-salary')">&times;</span>
+            </div>
+            <form id="form-salary">
+                <div class="form-group">
+                    <label>الموظف</label>
+                    <select id="salary-user-id" required class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>الشهر</label>
+                    <input type="month" id="salary-month" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>الراتب الأساسي</label>
+                    <input type="number" id="salary-base" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>البدلات / المكافآت</label>
+                    <input type="number" id="salary-bonus" value="0" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>الخصومات</label>
+                    <input type="number" id="salary-deduction" value="0" class="form-control">
+                </div>
+                <button type="submit" class="btn-primary w-100">حفظ مسودة الراتب</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-expense" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2>تسجيل مصروف تشغيلي</h2>
+                <span class="close" onclick="UI.closeModal('modal-expense')">&times;</span>
+            </div>
+            <form id="form-expense">
+                <div class="form-group">
+                    <label>التاريخ</label>
+                    <input type="date" id="expense-date" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>التصنيف</label>
+                    <input type="text" id="expense-category" required class="form-control" placeholder="مثال: صيانة، كهرباء، مطبوعات">
+                </div>
+                <div class="form-group">
+                    <label>المبلغ</label>
+                    <input type="number" id="expense-amount" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <textarea id="expense-desc" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-primary w-100">تسجيل المصروف</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing staff -->
+    <div id="modal-staff" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2 id="modal-staff-title">إضافة موظف</h2>
+                <span class="close" onclick="UI.closeModal('modal-staff')">&times;</span>
+            </div>
+            <form id="form-staff">
+                <input type="hidden" id="staff-id">
+                <div class="form-group">
+                    <label>الاسم الكامل (عربي)</label>
+                    <input type="text" id="staff-name" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="staff-email" required class="form-control" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="text" id="staff-phone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>الدور</label>
+                    <select id="staff-role" required class="form-control">
+                        <option value="teacher">معلم</option>
+                        <option value="supervisor">مشرف</option>
+                        <option value="moneyman">محاسب</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الراتب الأساسي (اختياري)</label>
+                    <input type="number" id="staff-base-salary" class="form-control" value="0">
+                </div>
+                <div class="form-group" id="staff-password-group">
+                    <label>كلمة المرور الابتدائية</label>
+                    <input type="password" id="staff-password" class="form-control" autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn-primary w-100">حفظ الموظف</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for changing password -->
+    <div id="modal-change-password" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="flex-between mb-4">
+                <h2>تغيير كلمة المرور</h2>
+                <span class="close" onclick="UI.closeModal('modal-change-password')">&times;</span>
+            </div>
+            <form id="form-change-password">
+                <input type="hidden" id="cp-staff-id">
+                <div class="form-group">
+                    <label>الموظف</label>
+                    <input type="text" id="cp-staff-name" disabled class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور الجديدة</label>
+                    <input type="password" id="cp-new-password" required class="form-control" autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn-primary w-100">تغيير كلمة المرور</button>
+            </form>
+        </div>
+    </div>
+
+    
+        <!-- Classroom View Modal -->
+        <div id="modal-classroom" class="modal">
+            <div class="modal-content" style="max-width: 900px; height: 90vh; display: flex; flex-direction: column;">
+                <div class="modal-header">
+                    <h2 id="classroom-title">الفصل: اسم الفصل</h2>
+                    <button class="close-btn" onclick="UI.closeModal('modal-classroom')">&times;</button>
+                </div>
+                
+                <div class="tabs mt-2 mb-4 finance-tabs-nav" style="flex-shrink: 0;">
+                    <button class="btn-primary finance-nav-btn active-tab" id="tab-btn-students" onclick="ClassroomView.switchTab('students', this)">الطلاب</button>
+                    <button class="btn-secondary finance-nav-btn" id="tab-btn-attendance" onclick="ClassroomView.switchTab('attendance', this)">سجل الغياب السريع</button>
+                    <button class="btn-secondary finance-nav-btn" id="tab-btn-exams" onclick="ClassroomView.switchTab('exams', this)">الاختبارات والدرجات</button>
+                </div>
+
+                <div class="modal-body" style="flex: 1; overflow-y: auto;">
+                    <!-- Students Tab -->
+                    <div id="classroom-tab-students" class="finance-tab" style="display:block;">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-classroom-students">
+                                <thead>
+                                    <tr>
+                                        <th>الاسم</th>
+                                        <th>حالة الغياب الكلية</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Attendance Tab -->
+                    <div id="classroom-tab-attendance" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>تاريخ التحضير</label>
+                                <input type="date" id="classroom-attendance-date" onchange="ClassroomView.loadAttendance()">
+                            </div>
+                            <button class="btn-primary" onclick="ClassroomView.saveAttendance()">حفظ سجل الغياب</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-classroom-attendance">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>حاضر</th>
+                                        <th>غائب</th>
+                                        <th>متأخر</th>
+                                        <th>عذر</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Exams Tab -->
+                    <div id="classroom-tab-exams" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+                                <label>اختر الاختبار</label>
+                                <select id="classroom-exam-select" onchange="ClassroomView.loadGrades(this.value)">
+                                    <option value="">-- اختر --</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" onclick="ClassroomView.quickCreateExam()">+ اختبار جديد</button>
+                        </div>
+                        <div id="classroom-exam-grades-container">
+                            <div class="text-center text-muted p-4">اختر اختباراً من القائمة أو أنشئ اختباراً جديداً.</div>
+                        </div>
+
+
+    <script src="/static/js/api.js?v=8" defer></script>
+    <script src="/static/js/app.js?v=20" defer></script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الفصول</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=13">
+</head>
+<body>
+    <div id="app">
+        <!-- Login View -->
+        <div id="login-view" class="view active">
+            <div class="login-container">
+                <h2>تسجيل الدخول</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">البريد الإلكتروني</label>
+                        <input type="email" id="email" required placeholder="admin@local.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">كلمة المرور</label>
+                        <input type="password" id="password" required placeholder="password123">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">تسجيل الدخول</button>
+                    <div id="login-error" class="error-msg"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view">
+            <header>
+                <div class="header-left" style="display: flex; align-items: center; gap: 1rem;">
+                    <button id="mobile-back-btn" class="mobile-only" style="display:none; padding: 0.4rem 0.8rem; font-size: 1.2rem; cursor: pointer; background: transparent; border: none; color: var(--primary-color); font-weight: bold;">&#8594; رجوع</button>
+                    <h1>نظام إدارة الفصول</h1>
+                </div>
+                <div class="user-info">
+                    <button id="dark-toggle" class="btn-secondary btn-sm dark-toggle" style="margin-left: 10px; padding: 0.5rem; font-size: 1.2rem;">🌙</button>
+                    <div class="avatar" id="user-avatar">م</div>
+                    <div class="user-details desktop-only">
+                        <span id="user-name">الاسم</span>
+                        <span id="user-role-label" class="role-badge">المدير العام</span>
+                    </div>
+                    <button id="logout-btn" class="btn-secondary btn-sm" style="margin-right: 10px; padding: 0.5rem 0.8rem; font-weight: bold;" title="تسجيل الخروج">خروج 🚪</button>
+                </div>
+            </header>
+            
+            
+            
+                                    <!-- Mobile Welcome Card (Grid Mode Only) -->
+            <div id="mobile-welcome-card" class="mobile-only" style="margin: 1rem 1rem 0.5rem 1rem; background: white; border-radius: 24px; padding: 1rem; display: none; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.05); direction: ltr;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div class="avatar" id="mobile-grid-avatar" style="width: 50px; height: 50px; font-size: 1.5rem; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">م</div>
+                    <div style="display: flex; flex-direction: column; text-align: left;">
+                        <span style="font-size: 0.85rem; color: #888;">Welcome back</span>
+                        <span style="font-size: 1.25rem; font-weight: bold; color: #1a237e; display: flex; flex-direction: row-reverse; gap: 0.3rem;"><span id="mobile-grid-name">الاسم</span><span>أهلاً،</span></span>
+                    </div>
+                </div>
+                <div style="position: relative;">
+                    <div style="width: 45px; height: 45px; background: #f0f2f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">🔔</div>
+                    <div style="position: absolute; top: -2px; right: -2px; background: #00796b; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; border: 2px solid white;">0</div>
+                </div>
+            </div>
+
+            <nav class="main-nav" id="main-nav">
+                
+                        
+                
+                <button class="nav-btn active" data-target="panel-overview"><span class="nav-icon">📊</span><span class="nav-label">نظرة عامة</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-tree" data-target="panel-tree"><span class="nav-icon">🏫</span><span class="nav-label">المدرسة</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-classes" data-target="panel-classes"><span class="nav-icon">🚪</span><span class="nav-label">الفصول</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-students" data-target="panel-students"><span class="nav-icon">👨‍🎓</span><span class="nav-label">الطلاب</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-staff" data-target="panel-staff"><span class="nav-icon">👨‍🏫</span><span class="nav-label">الموظفين</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-exams" data-target="panel-exams"><span class="nav-icon">📝</span><span class="nav-label">الاختبارات</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-promotions" style="display:none;" data-target="panel-promotions"><span class="nav-icon">⭐</span><span class="nav-label">الترفيعات</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-finance" style="display:none;" data-target="panel-finance"><span class="nav-icon">💰</span><span class="nav-label">المالية</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-reports" data-target="panel-reports"><span class="nav-icon">📈</span><span class="nav-label">التقارير</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-audit" data-target="panel-audit" style="display:none;"><span class="nav-icon">🛡️</span><span class="nav-label">سجل النظام</span><span class="nav-arrow">&#8592;</span></button>
+                <button class="nav-btn" id="nav-settings" data-target="panel-settings"><span class="nav-icon">⚙️</span><span class="nav-label">الإعدادات</span><span class="nav-arrow">&#8592;</span></button>
+            </nav>
+
+            <main class="dashboard-content">
+                <div id="panel-overview" class="panel active">
+                    <div class="flex-between mb-4">
+                        <h2>نظرة عامة</h2>
+                    </div>
+                    <div class="stats-grid mb-4" id="overview-stats-grid">
+                        <div class="stat-card">
+                            <h3>إجمالي الطلاب</h3>
+                            <div class="stat-value" id="stat-students">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>إجمالي الفصول</h3>
+                            <div class="stat-value" id="stat-classes">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>المستويات</h3>
+                            <div class="stat-value" id="stat-levels">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>جلسات اليوم</h3>
+                            <div class="stat-value" id="stat-sessions">0</div>
+                            <div class="text-sm mt-2 text-muted" id="stat-sessions-completed">مكتملة: 0</div>
+                        </div>
+                        <div class="stat-card" id="boss-stat-invoices" style="display:none;">
+                            <h3>فواتير متأخرة</h3>
+                            <div class="stat-value text-danger" id="stat-invoices">0</div>
+                        </div>
+                        <div class="stat-card" id="boss-stat-promotions" style="display:none;">
+                            <h3>طلبات ترفيع</h3>
+                            <div class="stat-value text-warning" id="stat-promotions">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <h3 class="mb-4">أحدث النشاطات</h3>
+                        <div id="dashboard-activity-feed">
+                            <div class="text-muted text-center p-4">جاري التحميل...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="panel-tree" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>تصفح المدرسة (المستويات والفصول)</h2>
+                        <input type="text" id="tree-search" placeholder="بحث عن طالب..." style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; width: 300px;" oninput="
+                            const term = this.value.toLowerCase();
+                            document.querySelectorAll('.tree-student-card').forEach(card => {
+                                const match = card.textContent.toLowerCase().includes(term);
+                                card.style.display = match ? 'flex' : 'none';
+                            });
+                        ">
+                    </div>
+                    <div id="school-tree-container" class="card" style="background: transparent; box-shadow: none; padding: 0;">
+                        <!-- Tree will be rendered here via JS -->
+                    </div>
+                </div>
+
+                <div id="panel-classes" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>إدارة الفصول</h2>
+                        <button id="btn-add-class" class="btn-primary" onclick="UI.openModal('modal-class')">إضافة فصل</button>
+                    </div>
+                    <div class="classes-grid mt-4 mb-4" id="grid-classes" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+                        <!-- Rendered by JS -->
+                    </div>
+
+                </div>
+                
+                <div id="panel-students" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>إدارة الطلاب</h2>
+                        <div class="action-bar">
+                            <select id="filter-student-class" class="form-control" onchange="refreshStudentsTable()" style="width: 150px;">
+                                <option value="">جميع الفصول</option>
+                            </select>
+                            <input type="text" id="search-student" class="form-control" placeholder="بحث عن طالب..." onkeyup="filterStudents(this.value)" style="width: 250px;">
+                            <button id="btn-add-student" class="btn-primary" onclick="UI.openModal('modal-student')">إضافة طالب</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="table-students">
+                            <thead>
+                                <tr>
+                                    <th>الرقم</th>
+                                    <th>الاسم</th>
+                                    <th>المستوى</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="panel-staff" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>إدارة الموظفين</h2>
+                        <button class="btn-primary" id="btn-add-staff" style="display:none;" onclick="openAddStaffModal()">+ إضافة موظف</button>
+                    </div>
+                    <div class="table-responsive mb-4">
+                        <table class="data-table" id="table-staff-list">
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>البريد الإلكتروني</th>
+                                    <th>الدور</th>
+                                    <th>الهاتف</th>
+                                    <th>الراتب الأساسي</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <h2 class="mt-4">سبورة الملاحظات الداخلية</h2>
+                    <div class="card mt-4">
+                        <form id="form-staff-note" class="mb-4">
+                            <div class="form-group">
+                                <textarea id="staff-note-content" required placeholder="أضف ملاحظة أو إعلان للفريق..." rows="3"></textarea>
+                            </div>
+                            <div class="flex-between">
+                                <select id="staff-note-severity" style="width: auto;" class="form-group">
+                                    <option value="low">ملاحظة عادية</option>
+                                    <option value="medium">تنبيه</option>
+                                    <option value="high">تحذير / مهم</option>
+                                </select>
+                                <button type="submit" class="btn-primary">نشر الملاحظة</button>
+                            </div>
+                        </form>
+                        <div id="staff-notes-content" style="max-height: 400px; overflow-y: auto;">
+                            <!-- Notes injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="panel-exams" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>إدارة الاختبارات</h2>
+                        <button id="btn-add-exam" class="btn-primary" onclick="UI.openModal('modal-create-exam')">+ اختبار جديد</button>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="form-group" style="max-width: 300px;">
+                            <label>اختر الفصل لعرض اختباراته</label>
+                            <select id="exam-class-filter" class="form-control" onchange="loadExams()">
+                                <option value="">اختر الفصل...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="table-exams">
+                            <thead>
+                                <tr>
+                                    <th>العنوان</th>
+                                    <th>التاريخ</th>
+                                    <th>الدرجة النهائية</th>
+                                    <th>الحالة</th>
+                                    <th>شهادة؟</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="panel-promotions" class="panel">
+                    <h2>لوحة الترفيعات (طلبات قيد الانتظار)</h2>
+                    <div class="table-responsive mt-4">
+                        <table class="data-table" id="table-promotions">
+                            <thead>
+                                <tr>
+                                    <th>الطالب</th>
+                                    <th>من مستوى</th>
+                                    <th>إلى مستوى</th>
+                                    <th>درجة الاختبار</th>
+                                    <th>تاريخ الطلب</th>
+                                    <th>القرار</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                
+                <div id="panel-reports" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>التقارير والإحصائيات</h2>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="report-tabs-container">
+                            <button class="btn-primary report-tab-btn" onclick="Reports.switchTab('gradebook')">سجل الدرجات</button>
+                            <button class="btn-secondary report-tab-btn" onclick="Reports.switchTab('attendance')">تقرير الغياب</button>
+                            <button class="btn-secondary report-tab-btn" onclick="Reports.switchTab('stuck')">الطلاب المتعثرين</button>
+                        </div>
+                        
+                        <div id="report-view-gradebook" class="report-view">
+                            <div class="flex-between mb-4">
+                                <div class="form-group" style="max-width: 300px; flex: 1;">
+                                    <label>اختر الفصل</label>
+                                    <select id="report-class-select" class="form-control" onchange="Reports.loadGradebook()">
+                                        <option value="">اختر الفصل...</option>
+                                    </select>
+                                </div>
+                                <button class="btn-secondary" onclick="Reports.exportCSV('table-report-gradebook', 'سجل_الدرجات.csv')">تصدير CSV</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-report-gradebook">
+                                    <thead><tr><th>الطالب</th><th>النسبة الإجمالية</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div id="report-view-attendance" class="report-view" style="display:none;">
+                            <div class="flex-between mb-4">
+                                <div class="form-group" style="max-width: 300px; flex: 1;">
+                                    <label>اختر الفصل</label>
+                                    <select id="report-attendance-class-select" class="form-control" onchange="Reports.loadAttendance()">
+                                        <option value="">اختر الفصل...</option>
+                                    </select>
+                                </div>
+                                <button class="btn-secondary" onclick="Reports.exportCSV('table-report-attendance', 'تقرير_الغياب.csv')">تصدير CSV</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-report-attendance">
+                                    <thead><tr><th>الطالب</th><th>حضور</th><th>غياب</th><th>تأخر</th><th>عذر</th><th>نسبة الغياب</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div id="report-view-stuck" class="report-view" style="display:none;">
+                            <div class="flex-between mb-4">
+                                <p>الطلاب الذين لم يتم ترفيعهم لأكثر من 90 يوم</p>
+                                <button class="btn-secondary" onclick="Reports.exportCSV('table-report-stuck', 'الطلاب_المتعثرين.csv')">تصدير CSV</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-report-stuck">
+                                    <thead><tr><th>الطالب</th><th>المستوى الحالي</th><th>تاريخ آخر تحرك</th><th>أيام التعثر</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="panel-audit" class="panel">
+                    <div class="flex-between mb-4">
+                        <h2>سجل النظام (Audit Log)</h2>
+                        <button class="btn-secondary" onclick="Audit.loadLogs()">تحديث</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="table-audit">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ والوقت</th>
+                                    <th>المستخدم</th>
+                                    <th>الحدث</th>
+                                    <th>الكيان</th>
+                                    <th>المعرف</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="panel-settings" class="panel">
+                    <h2>الإعدادات</h2>
+
+                    <div class="card mt-4" id="settings-institution-card" style="display:none;">
+                        <h3 style="margin-bottom: 1rem;">إعدادات المؤسسة</h3>
+                        <form id="form-settings">
+                            <div class="settings-grid">
+                                <div class="form-group">
+                                    <label>اسم المؤسسة</label>
+                                    <input type="text" id="setting-institution-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>العملة</label>
+                                    <input type="text" id="setting-currency" required placeholder="EGP">
+                                </div>
+                                <div class="form-group">
+                                    <label>عتبة التعثر (أشهر)</label>
+                                    <input type="number" id="setting-stuck-months" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>عتبة التعثر (درجة)</label>
+                                    <input type="number" id="setting-stuck-grade" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>درجة النجاح الافتراضية</label>
+                                    <input type="number" id="setting-passing-grade" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary mt-4">حفظ الإعدادات</button>
+                        </form>
+                    </div>
+
+                    <div class="card mt-4" id="settings-db-card" style="display:none; background: #fff5f5; border-color: #fc8181;">
+                        <h3 style="margin-bottom: 1rem; color: #c53030;">إدارة قاعدة البيانات (المدير فقط)</h3>
+                        <p style="margin-bottom: 1rem; color: #e53e3e; font-size: 0.9rem;">
+                            <strong>تحذير:</strong> هذه العمليات خطيرة جداً وتؤثر على جميع بيانات النظام. يرجى الحذر.
+                        </p>
+                        <div class="db-actions">
+                            <button class="btn-primary" onclick="DBAdmin.downloadBackup()">تحميل نسخة احتياطية</button>
+                            
+                            <label class="btn-secondary" style="cursor: pointer;">
+                                رفع قاعدة بيانات
+                                <input type="file" id="db-upload-input" accept=".db" style="display: none;" onchange="DBAdmin.uploadBackup(this)">
+                            </label>
+                            
+                            <button class="btn-danger" style="margin-right: auto;" onclick="DBAdmin.wipeDatabase()">مسح جميع البيانات</button>
+                        </div>
+                    </div>
+
+                    
+                    <div class="card mt-4" id="settings-fee-templates-card" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <h3>قوالب الرسوم (للإيرادات)</h3>
+                            <button class="btn-primary" onclick="FinanceUI.openFeeTemplateModal()">+ إضافة قالب</button>
+                        </div>
+                        <table class="data-table" id="table-fee-templates">
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>المبلغ</th>
+                                    <th>المستوى المخصص</th>
+                                    <th>النوع</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <div class="flex-between mb-4">
+                            <div class="action-bar">
+                                <h3>إدارة المواد والمستويات الدراسية</h3>
+                                <button class="btn-secondary btn-sm" onclick="RoadmapUI.showPanel()">عرض المسارات (Roadmap)</button>
+                            </div>
+                            <button id="btn-add-subject" class="btn-primary" onclick="UI.openModal('modal-subject')">إضافة مادة جديدة</button>
+                        </div>
+                        <div id="subjects-levels-tree" class="accordion-container mt-3">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4" style="background: #fffafa; border: 1px solid #ffcccc;">
+                        <h3 class="text-danger mb-3">تسجيل الخروج</h3>
+                        <p class="mb-3 text-muted">إنهاء جلستك الحالية وتسجيل الخروج من النظام.</p>
+                        <button class="btn-danger" onclick="document.getElementById('logout-btn').click()">تسجيل الخروج من النظام</button>
+                    </div>
+                </div>
+
+                <div id="panel-roadmaps" class="panel">
+                    <div class="flex-between mb-4">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <button class="btn-secondary" onclick="RoadmapUI.hidePanel()" style="border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">&#8594;</button>
+                            <h2 style="margin: 0;">مسارات التعلم للمواد (Roadmaps)</h2>
+                        </div>
+                        <button class="btn-secondary" onclick="RoadmapUI.render()">تحديث المسارات</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div id="roadmap-container" style="padding: 1rem 0;">
+                            <div class="text-center text-muted">جاري التحميل...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="panel-finance" class="panel">
+                    <h2>المالية</h2>
+                    <div class="tabs mt-4 mb-4 finance-tabs-nav">
+                        <button class="btn-primary finance-nav-btn active-tab" onclick="FinanceUI.showTab('finance-income', this)">الإيرادات والرسوم</button>
+                        <button class="btn-secondary finance-nav-btn" onclick="FinanceUI.showTab('finance-salaries', this)">الرواتب</button>
+                        <button class="btn-secondary finance-nav-btn" onclick="FinanceUI.showTab('finance-expenses', this)">المصروفات</button>
+                        <button class="btn-secondary finance-nav-btn" onclick="FinanceUI.showTab('finance-debts', this)">الديون</button>
+                        <button class="btn-secondary finance-nav-btn" onclick="FinanceUI.showTab('finance-reports', this)">التقارير</button>
+                    </div>
+
+                    <div id="finance-income" class="finance-tab" style="display:block;">
+                        <!-- Summary Cards -->
+                        <div class="finance-summary-grid mb-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div class="stat-card" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border-right: 4px solid #3b82f6; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <h3 style="margin-top:0; font-size: 1rem; color: #64748b;">إجمالي الفوترة</h3>
+                                <p id="summary-billed" class="text-primary" style="font-size: 1.5rem; font-weight: bold; margin:0;">0 ج.م</p>
+                            </div>
+                            <div class="stat-card" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border-right: 4px solid #10b981; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <h3 style="margin-top:0; font-size: 1rem; color: #64748b;">التحصيلات</h3>
+                                <p id="summary-collected" class="text-success" style="font-size: 1.5rem; font-weight: bold; margin:0;">0 ج.م</p>
+                            </div>
+                            <div class="stat-card" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border-right: 4px solid #ef4444; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <h3 style="margin-top:0; font-size: 1rem; color: #64748b;">المستحقات (ديون)</h3>
+                                <p id="summary-outstanding" class="text-danger" style="font-size: 1.5rem; font-weight: bold; margin:0;">0 ج.م</p>
+                            </div>
+                            <div class="stat-card" style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border-right: 4px solid #f59e0b; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <h3 style="margin-top:0; font-size: 1rem; color: #64748b;">فواتير متأخرة</h3>
+                                <p id="summary-overdue" class="text-warning" style="font-size: 1.5rem; font-weight: bold; margin:0;">0</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-between mb-4">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <h3 style="margin:0;">فواتير الطلاب</h3>
+                                <select id="filter-invoice-status" class="form-control" style="width:120px;" onchange="FinanceUI.loadInvoices()">
+                                    <option value="">جميع الحالات</option>
+                                    <option value="paid">مدفوعة</option>
+                                    <option value="partial">جزئي</option>
+                                    <option value="unpaid">غير مدفوعة</option>
+                                </select>
+                                <input type="date" id="filter-invoice-from" class="form-control" title="من تاريخ" onchange="FinanceUI.loadInvoices()">
+                                <input type="date" id="filter-invoice-to" class="form-control" title="إلى تاريخ" onchange="FinanceUI.loadInvoices()">
+                            </div>
+                            <div class="action-group">
+                                <button class="btn-primary" onclick="FinanceUI.openBulkInvoiceModal()">فوترة جماعية</button>
+                                <button class="btn-primary" onclick="FinanceUI.openInvoiceModal()">+ إضافة فاتورة</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-invoices">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>البيان</th>
+                                        <th>المبلغ</th>
+                                        <th>المدفوع</th>
+                                        <th>المتبقي</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="finance-salaries" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <h3>رواتب الموظفين</h3>
+                            <div class="action-group">
+                                <input type="month" id="salary-month-filter" class="form-control" onchange="FinanceUI.loadSalaries()">
+                                <button class="btn-primary" onclick="FinanceUI.generateBulkSalaries()">توليد رواتب الشهر</button>
+                                <button class="btn-primary" onclick="FinanceUI.openSalaryModal()">+ رصد راتب</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-salaries">
+                                <thead>
+                                    <tr>
+                                        <th>الموظف</th>
+                                        <th>الشهر</th>
+                                        <th>الأساسي</th>
+                                        <th>البدلات</th>
+                                        <th>الخصومات</th>
+                                        <th>الصافي</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="finance-expenses" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <h3>المصروفات التشغيلية</h3>
+                            <button class="btn-primary" onclick="UI.openModal('modal-expense')">+ إضافة مصروف</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-expenses">
+                                <thead>
+                                    <tr>
+                                        <th>التاريخ</th>
+                                        <th>التصنيف</th>
+                                        <th>المبلغ</th>
+                                        <th>الوصف</th>
+                                        <th>سجل بواسطة</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    
+                    <div id="finance-debts" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <h3>الديون المستحقة</h3>
+                            <button class="btn-secondary" onclick="FinanceUI.loadDebts()">تحديث</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-debts">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>البيان</th>
+                                        <th>المبلغ الكلي</th>
+                                        <th>المدفوع</th>
+                                        <th>المتبقي</th>
+                                        <th>الحالة</th>
+                                        <th>تسجيل دفعة</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="finance-reports" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <h3>التقارير المالية</h3>
+                            <button class="btn-secondary" onclick="FinanceUI.loadReports()">تحديث</button>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3>إجمالي الإيرادات</h3>
+                                <div class="stat-value text-success" id="report-income">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>المستحقات غير المدفوعة</h3>
+                                <div class="stat-value text-warning" id="report-outstanding">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>الرواتب المدفوعة</h3>
+                                <div class="stat-value text-danger" id="report-salaries">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>المصروفات التشغيلية</h3>
+                                <div class="stat-value text-danger" id="report-expenses">0</div>
+                            </div>
+                            <div class="stat-card" style="grid-column: span 2;">
+                                <h3>صافي الأرباح</h3>
+                                <div class="stat-value" id="report-net">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-subject" class="modal">
+        <div class="modal-content">
+            <h3>إضافة مادة</h3>
+            <form id="form-subject">
+                <input type="hidden" id="subj-id">
+                <div class="form-group">
+                    <label>اسم المادة</label>
+                    <input type="text" id="subj-name" required>
+                </div>
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <input type="text" id="subj-desc">
+                </div>
+                <div class="form-group">
+                    <label>نسبة النجاح للترقية التلقائية (%)</label>
+                    <input type="number" id="subj-promo-threshold" value="75" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-subject')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <div id="modal-level" class="modal">
+        <div class="modal-content">
+            <h3>إضافة مستوى</h3>
+            <form id="form-level">
+                <input type="hidden" id="lvl-id">
+                <div class="form-group">
+                    <label>اسم المستوى</label>
+                    <input type="text" id="lvl-name" required>
+                </div>
+                <div class="form-group">
+                    <label>الرمز (مثال: L1)</label>
+                    <input type="text" id="lvl-code" required>
+                </div>
+                <div class="form-group">
+                    <label>الترتيب</label>
+                    <input type="number" id="lvl-order" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label>المادة</label>
+                    <select id="lvl-subject-id" required></select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-level')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-class" class="modal">
+        <div class="modal-content">
+            <h3>إضافة فصل</h3>
+            <form id="form-class">
+                <input type="hidden" id="cls-id">
+                <div class="form-group">
+                    <label>اسم الفصل</label>
+                    <input type="text" id="cls-name" required>
+                </div>
+                <div class="form-group">
+                    <label>المستوى</label>
+                    <select id="cls-level" required></select>
+                </div>
+                <div class="form-group">
+                    <label>المجموعة (أ، ب، ج...)</label>
+                    <input type="text" id="cls-group" required>
+                </div>
+                <div class="form-group">
+                    <label>السعة (عدد الطلاب)</label>
+                    <input type="number" id="cls-capacity" value="30" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-class')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-student" class="modal">
+        <div class="modal-content">
+            <h3>إضافة طالب</h3>
+            <form id="form-student">
+                <input type="hidden" id="stu-edit-id">
+                <div class="form-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="stu-name" required>
+                </div>
+                <div class="form-group">
+                    <label>تاريخ الميلاد</label>
+                    <input type="date" id="stu-dob">
+                </div>
+                <div class="form-group">
+                    <label>العنوان</label>
+                    <input type="text" id="stu-address">
+                </div>
+                <div class="form-group">
+                    <label>رقم هاتف الوالد</label>
+                    <input type="text" id="stu-father-phone">
+                </div>
+                <div class="form-group">
+                    <label>رقم هاتف الوالدة</label>
+                    <input type="text" id="stu-mother-phone">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-student')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-enroll" class="modal">
+        <div class="modal-content">
+            <h3>تسجيل طالب في فصل</h3>
+            <form id="form-enroll">
+                <input type="hidden" id="enroll-student-id">
+                <div class="form-group">
+                    <label>الطالب</label>
+                    <input type="text" id="enroll-student-name" disabled>
+                </div>
+                <div class="form-group">
+                    <label>اختر الفصل</label>
+                    <select id="enroll-class-id" required onchange="UI.onEnrollClassChange()"></select>
+                </div>
+                <div id="enroll-subject-levels-container" style="display: none; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <h4>تحديد المستويات للمواد</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">سيتم تعيين المستوى الأول افتراضياً إذا تركته فارغاً.</p>
+                    <div id="enroll-subject-levels-list"></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-enroll')">إلغاء</button>
+                    <button type="submit" class="btn-primary">تسجيل وإصدار شهادة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-sessions" class="modal">
+        <div class="modal-content modal-lg">
+            <div class="flex-between mb-4">
+                <h3 id="sessions-modal-title">الجلسات (الجدول والحضور)</h3>
+                <div>
+                    <button class="btn-primary" onclick="Sessions.generateSessions()">توليد جلسات الشهر</button>
+                    <button class="btn-secondary" onclick="UI.closeModal('modal-sessions')">إغلاق</button>
+                </div>
+            </div>
+            
+            <input type="hidden" id="current-sessions-class-id">
+            
+            <h4>الجدول الأسبوعي</h4>
+            <form id="form-schedule" class="mb-4">
+                <div class="schedule-form-row">
+                    <div class="form-group">
+                        <label>اليوم</label>
+                        <select id="sched-day" required>
+                            <option value="0">الأحد</option>
+                            <option value="1">الإثنين</option>
+                            <option value="2">الثلاثاء</option>
+                            <option value="3">الأربعاء</option>
+                            <option value="4">الخميس</option>
+                            <option value="5">الجمعة</option>
+                            <option value="6">السبت</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المادة</label>
+                        <select id="sched-subject" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>وقت البدء</label>
+                        <input type="time" id="sched-start" required>
+                    </div>
+                    <div class="form-group">
+                        <label>وقت الانتهاء</label>
+                        <input type="time" id="sched-end" required>
+                    </div>
+                    <button type="submit" class="btn-primary">إضافة للجدول</button>
+                </div>
+            </form>
+            
+            <div class="table-responsive mb-4">
+                <table class="data-table" id="table-schedules">
+                    <thead>
+                        <tr>
+                            <th>اليوم</th>
+                            <th>المادة</th>
+                            <th>الوقت</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <hr style="margin: 20px 0; border: 1px solid var(--border-color);">
+            
+            <h4>الجلسات القادمة</h4>
+            <div class="mb-4">
+                <div id="sessions-list" class="task-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-attendance" class="modal">
+        <div class="modal-content modal-lg">
+            <h3>تسجيل الحضور</h3>
+            <form id="form-attendance">
+                <input type="hidden" id="att-session-id">
+                <div class="mb-4">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span style="font-weight: bold; color: var(--text-color);">قائمة الطلاب</span>
+                        <button type="button" class="btn-primary btn-sm" onclick="Sessions.markAllPresent()">تحديد الكل كحاضر</button>
+                    </div>
+                    <div id="attendance-list" class="checklist-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-attendance')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ الحضور</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Student Profile Modal -->
+    <div id="modal-student-profile" class="modal">
+        <div class="modal-content modal-lg profile-dashboard">
+            <button type="button" class="close-btn" onclick="UI.closeModal('modal-student-profile')">&times;</button>
+            <div class="profile-hero mb-4">
+                <div class="profile-hero-main">
+                    <div class="profile-avatar" id="profile-avatar-display">ط</div>
+                    <div class="profile-header-info">
+                        <h2 id="profile-name" style="margin-bottom: 0.25rem;">اسم الطالب</h2>
+                        <div class="profile-badges">
+                            <span class="role-badge" id="profile-status-badge" style="background: var(--success-color); color: white;">نشط</span>
+                            <span class="role-badge" id="profile-progress-badge" style="background: var(--primary-color); color: white;">التقدم: جيد</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-quick-actions">
+                    <button class="btn-primary btn-sm" onclick="app.quickPayment(event)">💸 تسديد دفعة</button>
+                    <button class="btn-secondary btn-sm" onclick="app.quickPrint(event)">🖨️ طباعة السجل</button>
+                </div>
+            </div>
+            
+            <input type="hidden" id="profile-student-id">
+            
+            <div class="stats-grid profile-stats-grid mb-4">
+                <!-- Academic Score Ring -->
+                <div class="stat-card stat-card-visual" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem;">متوسط الدرجات</div>
+                    <div class="circular-progress" id="profile-score-ring">
+                        <div class="inner-circle" id="profile-score">-</div>
+                    </div>
+                </div>
+                
+                <!-- Attendance Stats -->
+                <div class="stat-card" style="padding: 1rem; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="font-size: 0.9rem; color: var(--text-muted);">الغياب</div>
+                    <div class="stat-value" id="profile-absences" style="font-size: 1.8rem; color: var(--danger-color);">0</div>
+                </div>
+                <div class="stat-card" style="padding: 1rem; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="font-size: 0.9rem; color: var(--text-muted);">التأخير</div>
+                    <div class="stat-value" id="profile-lates" style="font-size: 1.8rem; color: var(--warning-color);">0</div>
+                </div>
+                
+                <!-- Financial Wallet -->
+                <div class="stat-card wallet-card" style="padding: 1rem; background: var(--surface-color); border: 2px solid var(--border-color);">
+                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: bold;">المحفظة المالية</div>
+                    <div class="wallet-bar-container">
+                        <div class="wallet-bar-paid" id="wallet-paid-bar" style="width: 0%;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 0.5rem;">
+                        <span style="color: var(--success-color);">المدفوع: <span id="profile-total-paid">0</span></span>
+                        <span style="color: var(--text-muted);">الإجمالي: <span id="profile-total-billed">0</span></span>
+                    </div>
+                    <hr style="margin: 0.5rem 0; border: 1px solid var(--border-color);">
+                    <div style="font-size: 0.9rem; text-align: left;">
+                        الرصيد المتبقي: <strong id="profile-balance" style="color: var(--danger-color); font-size: 1.1rem;">0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <div class="main-nav profile-nav mb-4">
+                    <button class="nav-btn active" onclick="UI.switchProfileTab('info', event)">
+                        <span class="nav-icon">👤</span><span class="nav-label">البيانات الشخصية</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('attendance', event)">
+                        <span class="nav-icon">📅</span><span class="nav-label">سجل الحضور</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('exams', event)">
+                        <span class="nav-icon">📝</span><span class="nav-label">الاختبارات</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('timeline', event)">
+                        <span class="nav-icon">⏳</span><span class="nav-label">الخط الزمني</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('notes', event)">
+                        <span class="nav-icon">📋</span><span class="nav-label">الملاحظات</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('finance', event)">
+                        <span class="nav-icon">💰</span><span class="nav-label">المالية</span>
+                    </button>
+                    <button class="nav-btn" onclick="UI.switchProfileTab('certificates', event)">
+                        <span class="nav-icon">🎓</span><span class="nav-label">الشهادات</span>
+                    </button>
+                </div>
+                
+                <div id="ptab-info" class="profile-tab active">
+                    <div class="profile-info-grid">
+                        <div class="info-group-card">
+                            <h4><span class="icon">👤</span> معلومات أساسية</h4>
+                            <div class="info-row"><span class="label">تاريخ الميلاد:</span> <span class="val" id="profile-dob"></span></div>
+                            <div class="info-row"><span class="label">تاريخ الالتحاق:</span> <span class="val" id="profile-enroll-date"></span></div>
+                            <div class="info-row"><span class="label">العنوان:</span> <span class="val" id="profile-address"></span></div>
+                        </div>
+                        <div class="info-group-card">
+                            <h4><span class="icon">📞</span> بيانات التواصل</h4>
+                            <div class="info-row"><span class="label">هاتف الوالد:</span> <span class="val" id="profile-father-phone"></span></div>
+                            <div class="info-row"><span class="label">هاتف الوالدة:</span> <span class="val" id="profile-mother-phone"></span></div>
+                        </div>
+                        <div class="info-group-card" style="grid-column: 1 / -1;">
+                            <div class="flex-between mb-2">
+                                <h4><span class="icon">📈</span> المستويات الحالية</h4>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" style="font-size: 0.9rem;">
+                                    <thead>
+                                        <tr>
+                                            <th>المادة</th>
+                                            <th>المستوى الحالي</th>
+                                            <th>تاريخ التحديث</th>
+                                            <th>إجراء</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="profile-subject-levels-content">
+                                        <!-- Populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="ptab-attendance" class="profile-tab" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>المادة</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-attendance-content">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="ptab-exams" class="profile-tab" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>الاختبار</th>
+                                    <th>الدرجة</th>
+                                    <th>النسبة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-exams-content">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="ptab-timeline" class="profile-tab" style="display: none;">
+                    <div id="profile-timeline-content" style="max-height: 300px; overflow-y: auto;">
+                        <!-- Timeline entries will be injected here -->
+                    </div>
+                </div>
+                
+                <div id="ptab-notes" class="profile-tab" style="display: none;">
+                    <form id="form-add-note" class="mb-4">
+                        <div class="form-group">
+                            <textarea id="note-content" required placeholder="أضف ملاحظة جديدة..." rows="3"></textarea>
+                        </div>
+                        <div class="flex-between">
+                            <select id="note-severity" style="width: auto;" class="form-group">
+                                <option value="low">ملاحظة عادية</option>
+                                <option value="medium">تنبيه</option>
+                                <option value="high">تحذير / مهم</option>
+                            </select>
+                            <button type="submit" class="btn-primary">إضافة ملاحظة</button>
+                        </div>
+                    </form>
+                    <div id="profile-notes-content" style="max-height: 300px; overflow-y: auto;">
+                        <!-- Notes will be injected here -->
+                    </div>
+                </div>
+
+                <div id="ptab-finance" class="profile-tab" style="display: none;">
+                    <h4 class="mb-2">الفواتير</h4>
+                    <div class="table-responsive mb-4">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>العنوان</th>
+                                    <th>الإجمالي</th>
+                                    <th>المدفوع</th>
+                                    <th>المتبقي</th>
+                                    <th>تاريخ الاستحقاق</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-invoices-content">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="mb-2">المدفوعات</h4>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>المبلغ</th>
+                                    <th>طريقة الدفع</th>
+                                    <th>رقم الإيصال</th>
+                                    <th>التاريخ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-payments-content">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="ptab-certificates" class="profile-tab" style="display: none;">
+                    <div class="flex-between mb-3">
+                        <h4 style="margin:0;">الشهادات المحفوظة</h4>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>نوع الشهادة</th>
+                                    <th>تاريخ الإصدار</th>
+                                    <th>الحالة</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-certificates-content">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions mt-4">
+                
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-manual-level" class="modal">
+        <div class="modal-content">
+            <h3>تغيير مستوى الطالب يدوياً</h3>
+            <form id="form-manual-level">
+                <input type="hidden" id="manual-lvl-student-id">
+                <div class="form-group">
+                    <label>المادة</label>
+                    <select id="manual-lvl-subject-id" required onchange="UI.onManualLevelSubjectChange()"></select>
+                </div>
+                <div class="form-group">
+                    <label>المستوى الجديد</label>
+                    <select id="manual-lvl-level-id" required></select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-manual-level')">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ وتغيير</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Class Profile Modal -->
+    <div id="modal-class-profile" class="modal">
+        <div class="modal-content modal-lg">
+            <h3 id="class-profile-title">ملف الفصل</h3>
+            
+            <div class="stats-grid class-profile-grid mb-4">
+                <div class="card">
+                    <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">الطلاب المتميزون</h4>
+                    <ul id="class-leading-students" style="list-style: none; padding: 0;">
+                        <li>سيتم التفعيل مع نظام الاختبارات والدرجات</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 style="color: var(--danger-color); margin-bottom: 0.5rem;">الطلاب الأكثر غياباً</h4>
+                    <ul id="class-absent-students" style="list-style: none; padding: 0;">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 style="color: var(--warning-color); margin-bottom: 0.5rem;">الطلاب المتعثرون</h4>
+                    <ul class="tree-list" id="cls-prof-exams">
+                        <div class="state-empty"><p>لا يوجد امتحانات</p></div>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 style="color: var(--text-muted); margin-bottom: 0.5rem;">تأخر في الترقية</h4>
+                    <ul class="tree-list" id="cls-prof-stats">
+                        <div class="state-empty"><p>لا توجد إحصائيات</p></div>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="modal-actions mt-4">
+                <button type="button" class="btn-secondary" onclick="UI.closeModal('modal-class-profile')">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Exam Modal -->
+    <div id="modal-create-exam" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="flex-between mb-4">
+                <h2>إضافة اختبار جديد</h2>
+                <span class="close" onclick="UI.closeModal('modal-create-exam')">&times;</span>
+            </div>
+            <form id="form-create-exam">
+                <div class="form-group">
+                    <label>عنوان الاختبار</label>
+                    <input type="text" id="exam-title" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>الفصل</label>
+                    <select id="exam-class-id" required class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>المادة</label>
+                    <select id="exam-subject-id" required class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>التاريخ</label>
+                    <input type="date" id="exam-date" required class="form-control">
+                </div>
+                <div class="flex-between">
+                    <div class="form-group" style="width: 48%;">
+                        <label>الدرجة النهائية</label>
+                        <input type="number" id="exam-total" value="100" required class="form-control">
+                    </div>
+                    <div class="form-group" style="width: 48%;">
+                        <label>درجة النجاح</label>
+                        <input type="number" id="exam-passing" value="50" required class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="exam-is-certification">
+                        هذا اختبار شهادة (النجاح فيه يرشح الطالب للترفيع)
+                    </label>
+                </div>
+                <button type="submit" class="btn-primary w-100">حفظ الاختبار</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grade Exam Modal -->
+    <div id="modal-grade-exam" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="flex-between mb-4">
+                <h2>رصد درجات الاختبار: <span id="grade-exam-title"></span></h2>
+                <span class="close" onclick="UI.closeModal('modal-grade-exam')">&times;</span>
+            </div>
+            <input type="hidden" id="grade-exam-id">
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="data-table" id="table-grade-exam">
+                    <thead>
+                        <tr>
+                            <th>الطالب</th>
+                            <th>الدرجة</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="flex-between mt-4">
+                <button class="btn-primary" onclick="submitExamScores()">حفظ الدرجات</button>
+                <button class="btn-secondary" onclick="publishExam()" id="btn-publish-exam">نشر الاختبار (نهائي)</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-invoice" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="flex-between mb-4">
+                <h2>إضافة فاتورة (مستحقات طالب)</h2>
+                <span class="close" onclick="UI.closeModal('modal-invoice')">&times;</span>
+            </div>
+            <form id="form-invoice">
+                <div class="form-group">
+                    <label>الطالب</label>
+                    <select id="invoice-student-id" required class="form-control" onchange="FinanceUI.onStudentSelectForInvoice(this)"></select>
+                </div>
+                <div class="form-group">
+                    <label>قالب الرسوم (اختياري)</label>
+                    <select id="invoice-template-id" class="form-control" onchange="FinanceUI.onTemplateSelect(this)">
+                        <option value="">-- إدخال يدوي --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>البيان</label>
+                    <input type="text" id="invoice-title" required class="form-control" placeholder="مثال: رسوم شهر سبتمبر">
+                </div>
+                <div class="form-group">
+                    <label>المبلغ الإجمالي</label>
+                    <input type="number" id="invoice-amount" required class="form-control" oninput="FinanceUI.calculateInvoiceTotals()">
+                </div>
+                
+                <div class="card mt-3 mb-3 p-3 bg-light">
+                    <h4 class="mb-3" style="font-size: 1rem; color: #555;">الخصم</h4>
+                    <div style="display: flex; gap: 1rem;">
+                        <div style="flex: 1;">
+                            <select id="invoice-discount-type" class="form-control" onchange="FinanceUI.calculateInvoiceTotals()">
+                                <option value="fixed">مبلغ ثابت</option>
+                                <option value="percent">نسبة مئوية (%)</option>
+                            </select>
+                        </div>
+                        <div style="flex: 2;">
+                            <input type="number" id="invoice-discount-value" class="form-control" placeholder="0" min="0" oninput="FinanceUI.calculateInvoiceTotals()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3 mb-3 p-3" style="background: #fdfdfd; border: 1px solid #eee;">
+                    <div class="flex-between mb-2">
+                        <span class="text-muted">قيمة الفاتورة الحالية</span>
+                        <span id="invoice-calc-current" style="font-weight: 500;">0.00 ج.م</span>
+                    </div>
+                    <div class="flex-between mb-2">
+                        <span class="text-muted" style="line-height: 1.2;">الحساب السابق<br><small style="font-size: 0.75rem;">إجمالي مديونية الطالب قبل هذه الفاتورة</small></span>
+                        <span id="invoice-calc-previous" style="font-weight: 500;">0.00 ج.م</span>
+                    </div>
+                    <hr style="margin: 0.75rem 0;">
+                    <div class="flex-between mb-3 p-2" style="background: #eef2ff; border-radius: 4px; border: 1px solid #c7d2fe;">
+                        <span style="font-weight: bold; color: var(--primary-color);">إجمالي الحساب المطلوب</span>
+                        <span id="invoice-calc-total-due" style="font-weight: bold; color: var(--primary-color); font-size: 1.1rem;">0.00 ج.م</span>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="flex-between mb-1">
+                            <label style="margin:0; font-weight: bold; color: #333;">المبلغ المحصل الآن</label>
+                            <a href="#" onclick="FinanceUI.payFullInvoiceAccount(); return false;" class="text-sm" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">سداد الحساب بالكامل</a>
+                        </div>
+                        <input type="number" id="invoice-paid-amount" class="form-control" placeholder="0.00" min="0" oninput="FinanceUI.calculateInvoiceTotals()" style="font-size: 1.1rem; padding: 0.75rem;">
+                    </div>
+                    
+                    <hr style="margin: 0.75rem 0;">
+                    <div class="flex-between mt-2">
+                        <span style="font-weight: bold; line-height: 1.2; color: #333;">صافي المديونية المتبقية<br><small class="text-muted" style="font-weight: normal; font-size: 0.75rem;">إجمالي ما سيبقى على الطالب بعد الفاتورة</small></span>
+                        <span id="invoice-calc-remaining" style="font-weight: bold; font-size: 1.3rem; color: #333;">0.00 ج.م</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>تاريخ الاستحقاق (اختياري)</label>
+                    <input type="date" id="invoice-due-date" class="form-control">
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn-secondary" style="flex: 1;" onclick="UI.closeModal('modal-invoice')">إلغاء</button>
+                    <button type="submit" class="btn-primary" style="flex: 2;">حفظ الفاتورة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-bulk-invoice" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2>فوترة جماعية لفصل كامل</h2>
+                <span class="close" onclick="UI.closeModal('modal-bulk-invoice')">&times;</span>
+            </div>
+            <form id="form-bulk-invoice">
+                <div class="form-group">
+                    <label>الفصل</label>
+                    <select id="bulk-class-id" required class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>قالب الرسوم</label>
+                    <select id="bulk-template-id" required class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>تسمية الشهر / الدفعة</label>
+                    <input type="text" id="bulk-month-label" required class="form-control" placeholder="مثال: شهر 10">
+                </div>
+                <button type="submit" class="btn-primary w-100">توليد الفواتير</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-fee-template" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2>إضافة قالب رسوم</h2>
+                <span class="close" onclick="UI.closeModal('modal-fee-template')">&times;</span>
+            </div>
+            <form id="form-fee-template">
+                <div class="form-group">
+                    <label>اسم القالب (البيان)</label>
+                    <input type="text" id="fee-template-name" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>المبلغ</label>
+                    <input type="number" id="fee-template-amount" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>تخصيص لمستوى (اختياري)</label>
+                    <select id="fee-template-level" class="form-control">
+                        <option value="">عام (لجميع المستويات)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="fee-template-recurring" checked>
+                    <label style="margin:0;">رسوم دورية (تتكرر)</label>
+                </div>
+                <button type="submit" class="btn-primary w-100">حفظ القالب</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-payment" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2>تسجيل دفعة <span id="payment-invoice-title"></span></h2>
+                <span class="close" onclick="UI.closeModal('modal-payment')">&times;</span>
+            </div>
+            <form id="form-payment">
+                <input type="hidden" id="pay-student-id">
+                <input type="hidden" id="pay-invoice-id">
+                <div class="form-group">
+                    <label>طريقة الدفع</label>
+                    <select id="pay-method" required class="form-control">
+                        <option value="cash">نقدي</option>
+                        <option value="bank">حوالة بنكية</option>
+                        <option value="card">بطاقة دفع</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>المبلغ</label>
+                    <input type="number" id="pay-amount" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>سبب الدفع / ملاحظات</label>
+                    <input type="text" id="pay-notes" class="form-control" placeholder="اختياري (مثال: رسوم شهر يوليو)">
+                </div>
+                <button type="submit" class="btn-primary w-100">حفظ وطباعة إيصال</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-salary" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2>رصد راتب موظف</h2>
+                <span class="close" onclick="UI.closeModal('modal-salary')">&times;</span>
+            </div>
+            <form id="form-salary">
+                <div class="form-group">
+                    <label>الموظف</label>
+                    <select id="salary-user-id" required class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>الشهر</label>
+                    <input type="month" id="salary-month" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>الراتب الأساسي</label>
+                    <input type="number" id="salary-base" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>البدلات / المكافآت</label>
+                    <input type="number" id="salary-bonus" value="0" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>الخصومات</label>
+                    <input type="number" id="salary-deduction" value="0" class="form-control">
+                </div>
+                <button type="submit" class="btn-primary w-100">حفظ مسودة الراتب</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-expense" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2>تسجيل مصروف تشغيلي</h2>
+                <span class="close" onclick="UI.closeModal('modal-expense')">&times;</span>
+            </div>
+            <form id="form-expense">
+                <div class="form-group">
+                    <label>التاريخ</label>
+                    <input type="date" id="expense-date" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>التصنيف</label>
+                    <input type="text" id="expense-category" required class="form-control" placeholder="مثال: صيانة، كهرباء، مطبوعات">
+                </div>
+                <div class="form-group">
+                    <label>المبلغ</label>
+                    <input type="number" id="expense-amount" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <textarea id="expense-desc" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-primary w-100">تسجيل المصروف</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing staff -->
+    <div id="modal-staff" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-4">
+                <h2 id="modal-staff-title">إضافة موظف</h2>
+                <span class="close" onclick="UI.closeModal('modal-staff')">&times;</span>
+            </div>
+            <form id="form-staff">
+                <input type="hidden" id="staff-id">
+                <div class="form-group">
+                    <label>الاسم الكامل (عربي)</label>
+                    <input type="text" id="staff-name" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="staff-email" required class="form-control" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="text" id="staff-phone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>الدور</label>
+                    <select id="staff-role" required class="form-control">
+                        <option value="teacher">معلم</option>
+                        <option value="supervisor">مشرف</option>
+                        <option value="moneyman">محاسب</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الراتب الأساسي (اختياري)</label>
+                    <input type="number" id="staff-base-salary" class="form-control" value="0">
+                </div>
+                <div class="form-group" id="staff-password-group">
+                    <label>كلمة المرور الابتدائية</label>
+                    <input type="password" id="staff-password" class="form-control" autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn-primary w-100">حفظ الموظف</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for changing password -->
+    <div id="modal-change-password" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="flex-between mb-4">
+                <h2>تغيير كلمة المرور</h2>
+                <span class="close" onclick="UI.closeModal('modal-change-password')">&times;</span>
+            </div>
+            <form id="form-change-password">
+                <input type="hidden" id="cp-staff-id">
+                <div class="form-group">
+                    <label>الموظف</label>
+                    <input type="text" id="cp-staff-name" disabled class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور الجديدة</label>
+                    <input type="password" id="cp-new-password" required class="form-control" autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn-primary w-100">تغيير كلمة المرور</button>
+            </form>
+        </div>
+    </div>
+
+    
+        <!-- Classroom View Modal -->
+        <div id="modal-classroom" class="modal">
+            <div class="modal-content" style="max-width: 900px; height: 90vh; display: flex; flex-direction: column;">
+                <div class="modal-header">
+                    <h2 id="classroom-title">الفصل: اسم الفصل</h2>
+                    <button class="close-btn" onclick="UI.closeModal('modal-classroom')">&times;</button>
+                </div>
+                
+                <div class="tabs mt-2 mb-4 finance-tabs-nav" style="flex-shrink: 0;">
+                    <button class="btn-primary finance-nav-btn active-tab" id="tab-btn-students" onclick="ClassroomView.switchTab('students', this)">الطلاب</button>
+                    <button class="btn-secondary finance-nav-btn" id="tab-btn-attendance" onclick="ClassroomView.switchTab('attendance', this)">سجل الغياب السريع</button>
+                    <button class="btn-secondary finance-nav-btn" id="tab-btn-exams" onclick="ClassroomView.switchTab('exams', this)">الاختبارات والدرجات</button>
+                </div>
+
+                <div class="modal-body" style="flex: 1; overflow-y: auto;">
+                    <!-- Students Tab -->
+                    <div id="classroom-tab-students" class="finance-tab" style="display:block;">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-classroom-students">
+                                <thead>
+                                    <tr>
+                                        <th>الاسم</th>
+                                        <th>حالة الغياب الكلية</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Attendance Tab -->
+                    <div id="classroom-tab-attendance" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>تاريخ التحضير</label>
+                                <input type="date" id="classroom-attendance-date" onchange="ClassroomView.loadAttendance()">
+                            </div>
+                            <button class="btn-primary" onclick="ClassroomView.saveAttendance()">حفظ سجل الغياب</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-classroom-attendance">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>حاضر</th>
+                                        <th>غائب</th>
+                                        <th>متأخر</th>
+                                        <th>عذر</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Exams Tab -->
+                    <div id="classroom-tab-exams" class="finance-tab" style="display:none;">
+                        <div class="flex-between mb-4">
+                            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+                                <label>اختر الاختبار</label>
+                                <select id="classroom-exam-select" onchange="ClassroomView.loadGrades(this.value)">
+                                    <option value="">-- اختر --</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" onclick="ClassroomView.quickCreateExam()">+ اختبار جديد</button>
+                        </div>
+                        <div id="classroom-exam-grades-container">
+                            <div class="text-center text-muted p-4">اختر اختباراً من القائمة أو أنشئ اختباراً جديداً.</div>
+                        </div>
+
+
+    <script src="/static/js/api.js?v=8" defer></script>
+    <script src="/static/js/app.js?v=20" defer></script>
+</body>
+</html>

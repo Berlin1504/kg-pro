@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+bcrypt
+pyjwt
+pydantic
+pydantic-settings
+python-multipart
+a2wsgi
